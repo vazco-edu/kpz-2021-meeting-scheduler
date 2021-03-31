@@ -1,10 +1,11 @@
 import React from 'react';
-import { Meteor } from 'meteor/meteor';
-import { render } from 'react-dom';
-import { App } from '/imports/ui/App';
-import {GoogleForm} from "../imports/ui/GoogleLoginForm";
+import {Meteor} from 'meteor/meteor';
+import {render} from 'react-dom';
+import App from '/imports/ui/App';
+import {BrowserRouter} from "react-router-dom";
 
 Meteor.startup(() => {
-  render(<App/>, document.getElementById('react-target'));
-  render(<GoogleForm/>, document.getElementById('google-login-form'))
+  render(<BrowserRouter>
+    <App/>
+  </BrowserRouter>, document.getElementById('react-target'));
 });

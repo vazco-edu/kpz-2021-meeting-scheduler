@@ -1,3 +1,6 @@
+# Development API keys gitignore
+development.json
+
 node_modules/
 # ------------- meteor gitignore
 

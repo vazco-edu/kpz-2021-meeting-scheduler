@@ -1,135 +1,47 @@
-# Development API keys gitignore
-development.json
-
-node_modules/
-# ------------- meteor gitignore
-
-.meteor/local
-.meteor/meteorite
-
-# ------------- OSX gitignore
-
+*.pyc
+/backend/db.sqlite3
 .DS_Store
-.AppleDouble
-.LSOverride
+.env
+*/settings/local.py
+/staticfiles/*
+/mediafiles/*
+__pycache__/
+/.vscode/
 
-# Icon must end with two \r
-Icon
+# coverage result
+.coverage
+/coverage/
 
-
-# Thumbnails
-._*
-
-# Files that might appear on external disk
-.Spotlight-V100
-.Trashes
-
-# Directories potentially created on remote AFP share
-.AppleDB
-.AppleDesktop
-Network Trash Folder
-Temporary Items
-.apdisk
-
-# ------------- Windows gitignore
-
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Windows Installer files
-*.cab
-*.msi
-*.msm
-*.msp
-
-# Windows shortcuts
-*.lnk
-
-# ------------- Linux gitignore
-
-*~
-
-# KDE directory preferences
-.directory
-
-# ------------- Sublime Text gitignore
-
-# cache files for sublime text
-*.tmlanguage.cache
-*.tmPreferences.cache
-*.stTheme.cache
-
-# workspace files are user-specific
-*.sublime-workspace
-
-# project files should be checked into the repository, unless a significant
-# proportion of contributors will probably not be using SublimeText
-# *.sublime-project
-
-# sftp configuration file
-sftp-config.json
-
-# ------------- Vim gitignore
-
-[._]*.s[a-w][a-z]
-[._]s[a-w][a-z]
-*.un~
-Session.vim
-.netrwhist
-*~
-
-# ------------- JetBrains gitignore
-
-# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
-
-*.iml
-
-## Directory-based project format:
+# pycharm
 .idea/
-# if you remove the above rule, at least ignore the following:
 
-# User-specific stuff:
-# .idea/workspace.xml
-# .idea/tasks.xml
-# .idea/dictionaries
+# data
+*.dump
 
-# Sensitive or high-churn files:
-# .idea/dataSources.ids
-# .idea/dataSources.xml
-# .idea/sqlDataSources.xml
-# .idea/dynamic.xml
-# .idea/uiDesigner.xml
+# npm
+node_modules/
+npm-debug.log
 
-# Gradle:
-# .idea/gradle.xml
-# .idea/libraries
+# Webpack
+/frontend/bundles/*
+/frontend/webpack_bundles/*
+/webpack-stats.json
 
-# Mongo Explorer plugin:
-# .idea/mongoSettings.xml
+# Sass
+.sass-cache
+*.map
 
-## File-based project format:
-*.ipr
-*.iws
+# General
+/{{project_name}}-venv/
+/venv/
+/env/
+/output/
+/cache/
+boilerplate.zip
 
-## Plugin-specific files:
+# Spritesmith
+spritesmith-generated/
+spritesmith.scss
 
-# IntelliJ
-out/
-
-# mpeltonen/sbt-idea plugin
-.idea_modules/
-
-# JIRA plugin
-atlassian-ide-plugin.xml
-
-# Crashlytics plugin (for Android Studio and IntelliJ)
-com_crashlytics_export_strings.xml
-crashlytics.properties
-crashlytics-build.properties
+# templated email
+tmp_email/

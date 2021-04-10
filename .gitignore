@@ -1,7 +1,3 @@
-#???
-*/static/frontend/main.js
-
-
 *.pyc
 /backend/db.sqlite3
 .DS_Store
@@ -27,7 +23,7 @@ node_modules/
 npm-debug.log
 
 # Webpack
-/static/frontend/*
+**/static/frontend/*
 /frontend/bundles/*
 /frontend/webpack_bundles/*
 /webpack-stats.json

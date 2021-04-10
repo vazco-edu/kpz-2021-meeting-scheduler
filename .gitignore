@@ -23,7 +23,7 @@ node_modules/
 npm-debug.log
 
 # Webpack
-**/static/frontend/*
+**/frontend/static/frontend/*
 /frontend/bundles/*
 /frontend/webpack_bundles/*
 /webpack-stats.json

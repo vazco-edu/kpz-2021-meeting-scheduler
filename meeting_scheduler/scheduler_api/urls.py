@@ -1,8 +1,8 @@
-from django.urls import path
-from .views import PostAPIView
+from django.urls import path, include
+from . import views
 
 app_name = 'scheduler_api'
 
 urlpatterns = [
-    path('', PostAPIView.as_view(), name='list')
+    path('', views.google_data, name="googledata"),
 ]

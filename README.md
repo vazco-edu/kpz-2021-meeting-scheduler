@@ -36,6 +36,8 @@ cd react_meeting_scheduler
 #Create local variable in .env file, copy Google API Key from Google console  
 echo REACT_APP_GOOGLE_KEY=your_google_api_key > .env
 
+npm install
+
 npm start
 ```
 

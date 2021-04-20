@@ -41,4 +41,5 @@ npm install
 npm start
 ```
 
+Please remember about adding new packages to requirements.txt file.
 

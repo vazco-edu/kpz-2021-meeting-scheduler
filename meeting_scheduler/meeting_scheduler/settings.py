@@ -38,11 +38,61 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    #Rest framework and CORS  
+    'corsheaders',
     'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+
+    #Custom applications
     'scheduler_api',
     'scheduler',
-    'corsheaders',
+
+    #django-allauth for social login
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
+
+SITE_ID = 1
+
+# Provider specific settings
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        # For each OAuth based provider, either add a ``SocialApp``
+        # (``socialaccount`` app) containing the required client
+        # credentials, or list them here:
+        'Google':{
+            'Client ID': os.environ.get('CLIENT_ID'),
+            'Client secret': os.environ.get('SECRET_GOOGLE'),
+        },
+        'SCOPE':[
+            "https://www.googleapis.com/auth/calendar.calendarlist.readonly",
+            "https://www.googleapis.com/auth/calendar.app.created",
+            "https://www.googleapis.com/auth/calendar.events.freebusy",
+            "https://www.googleapis.com/auth/calendar.events.public.readonly",
+            "https://www.googleapis.com/auth/calendar.freebusy",
+            "https://www.googleapis.com/auth/calendar.settings.readonly",
+            "https://www.googleapis.com/auth/calendar",
+            "https://www.googleapis.com/auth/calendar.readonly",
+            "https://www.googleapis.com/auth/calendar.events",
+            "https://www.googleapis.com/auth/calendar.events.owned",
+            "https://www.googleapis.com/auth/calendar.events.owned.readonly",
+            "https://www.googleapis.com/auth/calendar.events.readonly",
+            "https://www.googleapis.com/auth/calendar.calendarlist",
+            "https://www.googleapis.com/auth/calendar.calendars",
+            "https://www.googleapis.com/auth/calendar.calendars.readonly", 
+            "https://www.googleapis.com/auth/calendar.acls"
+        ],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }        
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -57,6 +107,14 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'meeting_scheduler.urls'
 
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -68,6 +126,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+
             ],
         },
     },
@@ -137,7 +196,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
-    ]
+    ],
 }
 
 CORS_ALLOWED_ORIGINS = [

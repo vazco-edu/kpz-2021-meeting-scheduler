@@ -5,7 +5,7 @@ import React from 'react';
 
 class connection extends React.Component{
   componentDidMount(){
-    const apiUrl = 'http://127.0.0.1:8000/scheduler_api/';
+    const apiUrl = 'http://127.0.0.1:8000/api/';
     fetch(apiUrl)
           .then((response) => response.json())
           .then((data) => console.log(data));
@@ -21,10 +21,9 @@ class connection extends React.Component{
   async simplePOST() {
     const requestOptions = {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ title: 'Zajonc' })
     };
-    fetch('http://127.0.0.1:8000/scheduler_api', requestOptions)
+    fetch('http://127.0.0.1:8000/api', requestOptions)
         .then(response => {
           response.json()
         })

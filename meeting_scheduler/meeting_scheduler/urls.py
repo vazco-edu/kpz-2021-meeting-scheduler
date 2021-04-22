@@ -15,14 +15,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
-from scheduler_api.views import GoogleLogin
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('scheduler.urls', namespace='scheduler')),
     path('api/', include('scheduler_api.urls', namespace='scheduler_api')),
     path('auth/', include('rest_framework.urls', namespace='rest_framework')), #Mock
-    path('accounts/', include('allauth.urls')),
-    path('rest-auth/google/', GoogleLogin.as_view(), name='google-login')
+    #path('accounts/', include('allauth.urls')),
 ]

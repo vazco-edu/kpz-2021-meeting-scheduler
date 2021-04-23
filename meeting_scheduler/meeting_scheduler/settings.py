@@ -59,6 +59,7 @@ INSTALLED_APPS = [
 ]
 
 SITE_ID = 2
+REST_USE_JWT = True
 
 # Provider specific settings
 SOCIALACCOUNT_PROVIDERS = {
@@ -126,7 +127,6 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
-
             ],
         },
     },
@@ -191,12 +191,18 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 REST_FRAMEWORK = {
+
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.AllowAny',
     ],
+
     'DEFAULT_PARSER_CLASSES': [
         'rest_framework.parsers.JSONParser',
     ],
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+    ),
 }
 
 CORS_ORIGIN_ALLOW_ALL = True

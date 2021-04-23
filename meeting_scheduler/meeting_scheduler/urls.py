@@ -21,6 +21,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('scheduler.urls', namespace='scheduler')),
     path('api/', include('scheduler_api.urls', namespace='scheduler_api')),
-    path('auth/', include('rest_framework.urls', namespace='rest_framework')), #Mock
+    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
     #path('accounts/', include('allauth.urls')),
 ]

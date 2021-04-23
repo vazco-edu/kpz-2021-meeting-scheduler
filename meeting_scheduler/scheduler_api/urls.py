@@ -5,5 +5,5 @@ app_name = 'scheduler_api'
 
 urlpatterns = [
     path('', views.google_data, name="googledata"),
-    path('rest-auth/google/', views.GoogleLogin.as_view(), name='google-login')
+    path('dj-rest-auth/google/', views.GoogleLogin.as_view(), name='google-login')
 ]

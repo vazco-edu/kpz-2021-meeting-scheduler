@@ -2,9 +2,10 @@ from rest_framework.decorators import parser_classes, api_view, permission_class
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
-from dj_rest_auth.registration.views import SocialLoginView
+from dj_rest_auth.registration.views import SocialLoginView, SocialConnectView
 
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+
 
 @api_view(['POST'])
 @parser_classes([JSONParser])

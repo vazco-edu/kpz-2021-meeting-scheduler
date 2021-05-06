@@ -15,9 +15,14 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from scheduler_api import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('scheduler.urls', namespace='scheduler')),
     path('api/', include('scheduler_api.urls', namespace='scheduler_api')),
+    path('auth/', include('rest_framework.urls', namespace='rest_framework')),
+    path('dj-rest-auth/google/', views.GoogleLogin.as_view(), name='google-login'),
+    path('dj-rest-auth/', include("dj_rest_auth.urls"))
+    #path('accounts/', include('allauth.urls')),
 ]

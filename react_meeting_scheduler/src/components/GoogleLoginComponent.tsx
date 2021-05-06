@@ -1,26 +1,28 @@
 import React from "react";
 import {GoogleLogin} from "react-google-login";
+import sendToken from "../GoogleLoginService"
 
 const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY+""
-interface Props {
-
+interface GoogleButtonProps {
+    
 }
 
+
 const responseGoogle = (response: any) => {
-    console.log(googleApiPublicKey)
     console.log(response)
 }
 
-const GoogleForm: React.FC<Props> = () => (
+
+const GoogleForm: React.FC<GoogleButtonProps> = () => (
     <div>
         <h5>Google Login</h5>
         <GoogleLogin
             //Here you shall enter the Google OAuth API Key ;) Will work on some env variables later
             clientId={googleApiPublicKey}
             buttonText="Login with Google"
-            onSuccess={responseGoogle}
+            onSuccess={sendToken}
             onFailure={responseGoogle}
-            cookiePolicy={"single_host_origin"}
+            cookiePolicy={"none"}
             scope={" https://www.googleapis.com/auth/calendar.calendarlist.readonly" +
             " https://www.googleapis.com/auth/calendar.app.created" +
             " https://www.googleapis.com/auth/calendar.events.freebusy" +

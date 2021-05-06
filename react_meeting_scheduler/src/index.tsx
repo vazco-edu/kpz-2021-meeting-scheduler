@@ -2,24 +2,24 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Home from './Home';
 import Footer from './components/Footer';
-import Header from './components/Header';
+import Navbar from './components/Navbar';
 import { Route, BrowserRouter, Switch } from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-
+import { CookiesProvider, Cookies } from "react-cookie";
 
 const routing = (
-  <BrowserRouter>
-    <React.StrictMode>
-      <Header />
-      <Switch>
-        <Route exact path="/" component={App} />
-        <Route exact path="/home" component={Home} />
-      </Switch>
-      <Footer />
-    </React.StrictMode>
-  </BrowserRouter>
+  <CookiesProvider>
+    <BrowserRouter>
+      <React.StrictMode>
+        <Navbar />
+        <Switch>
+          <Route exact path="/" component={App} />
+        </Switch>
+        <Footer />
+      </React.StrictMode>
+    </BrowserRouter>
+  </CookiesProvider>
 );
 
 ReactDOM.render(routing, document.getElementById('root'));

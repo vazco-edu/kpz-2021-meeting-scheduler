@@ -1,10 +1,14 @@
-from rest_framework.decorators import parser_classes, api_view
+from rest_framework.decorators import parser_classes, api_view, permission_classes
 from rest_framework.parsers import JSONParser
 from rest_framework.response import Response
 import datetime
 import os.path
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
+from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny, IsAuthenticated
+from dj_rest_auth.registration.views import SocialLoginView, SocialConnectView
+
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 
 from meeting_scheduler.scheduler_api.models import Calendar
 
@@ -153,7 +157,7 @@ def insert_event_to_calendar(request, calendar, format=None):
     return Response({'Event created:': event.get('htmlLink')})
 
 
-@api_view(['GET'])
+@api_view(['GET', 'POST'])
 @parser_classes([JSONParser])
 def is_free_or_busy(request, format=None):
     """
@@ -189,4 +193,18 @@ def is_free_or_busy(request, format=None):
 
     return Response(cal_dict)
 
+@permission_classes([IsAuthenticated])
+def google_data(request, format=None):
 
+    if request.method == "GET":
+        content ={
+            'status':'request was permitted'
+        }
+        return Response(content)
+    elif request.method == "POST":
+        print (f'=========================== received data: {request}')
+        return Response(request.data)
+
+
+class GoogleLogin(SocialLoginView):
+    adapter_class = GoogleOAuth2Adapter

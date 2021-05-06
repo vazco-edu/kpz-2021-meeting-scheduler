@@ -3,8 +3,8 @@ import {GoogleLogin} from "react-google-login";
 import sendToken from "../GoogleLoginService"
 
 const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY+""
-interface Props {
-
+interface GoogleButtonProps {
+    
 }
 
 
@@ -13,7 +13,7 @@ const responseGoogle = (response: any) => {
 }
 
 
-const GoogleForm: React.FC<Props> = () => (
+const GoogleForm: React.FC<GoogleButtonProps> = () => (
     <div>
         <h5>Google Login</h5>
         <GoogleLogin

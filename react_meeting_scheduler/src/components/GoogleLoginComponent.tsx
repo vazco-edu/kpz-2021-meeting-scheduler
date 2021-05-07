@@ -23,6 +23,10 @@ const GoogleForm: React.FC<GoogleButtonProps> = () => (
             onSuccess={sendToken}
             onFailure={responseGoogle}
             cookiePolicy={"none"}
+            responseType={"code"}
+            accessType={'offline'}
+            
+            prompt={'consent'} 
             scope={" https://www.googleapis.com/auth/calendar.calendarlist.readonly" +
             " https://www.googleapis.com/auth/calendar.app.created" +
             " https://www.googleapis.com/auth/calendar.events.freebusy" +

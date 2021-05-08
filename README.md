@@ -18,6 +18,8 @@ pip install -r requirements.txt
 
 #Export secret key, the example below is used only for development phase and should not be used in production
 export SECRET=key
+export SECRET_GOOGLE=secret_from_google_console
+export CLIENT_ID=client_id_from_google_console
 
 #Change directory and run django app
 cd meeting_scheduler && python manage.py runserver

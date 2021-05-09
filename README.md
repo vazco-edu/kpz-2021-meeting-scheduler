@@ -20,6 +20,8 @@ pip install -r requirements.txt
 export SECRET=key
 export SECRET_GOOGLE=secret_from_google_console
 export CLIENT_ID=client_id_from_google_console
+export REDIRECT_URI=http://localhost:3000
+
 
 #Change directory and run django app
 cd meeting_scheduler && python manage.py runserver

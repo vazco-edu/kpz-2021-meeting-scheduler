@@ -3,6 +3,7 @@ import React, {Component} from 'react';
 import GoogleForm from './components/GoogleLoginComponent';
 import { Button } from '@material-ui/core';
 import axios from 'axios';
+import CalendarCard from "./components/CalendarCard";
 
 const authAxios = axios.create({
   baseURL: 'http://127.0.0.1:8000',
@@ -25,6 +26,8 @@ class App extends Component{
           <Button onClick={this.simplePOST}>"Click"</Button>
           <h1>This is Meeting Scheduler</h1>
           <h1>This is home page</h1>
+            <div id='calendars'>
+            </div>
         <GoogleForm />
         </div>        
       )

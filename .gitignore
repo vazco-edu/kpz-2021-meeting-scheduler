@@ -74,6 +74,12 @@ chrome-user-data
 *.swp
 *.swo
 
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
 packages/react-devtools-core/dist
 packages/react-devtools-extensions/chrome/build
 packages/react-devtools-extensions/chrome/*.crx

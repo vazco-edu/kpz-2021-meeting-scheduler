@@ -15,7 +15,6 @@ const responseGoogle = (response: any) => {
 
 const GoogleForm: React.FC<GoogleButtonProps> = () => (
     <div>
-        <h5>Google Login</h5>
         <GoogleLogin
             //Here you shall enter the Google OAuth API Key ;) Will work on some env variables later
             clientId={googleApiPublicKey}

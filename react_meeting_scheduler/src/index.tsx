@@ -2,24 +2,23 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
-import Footer from './components/Footer';
-import Navbar from './components/Navbar';
-import { Route, BrowserRouter, Switch } from 'react-router-dom';
+import {Route, BrowserRouter, Switch} from 'react-router-dom';
 import reportWebVitals from './reportWebVitals';
-import { CookiesProvider, Cookies } from "react-cookie";
+import {CookiesProvider, Cookies} from "react-cookie";
+import LoginPage from "./components/LoginPage";
+
 
 const routing = (
-  <CookiesProvider>
-    <BrowserRouter>
-      <React.StrictMode>
-        <Navbar />
-        <Switch>
-          <Route exact path="/" component={App} />
-        </Switch>
-        <Footer />
-      </React.StrictMode>
-    </BrowserRouter>
-  </CookiesProvider>
+    <CookiesProvider>
+        <BrowserRouter>
+            <React.StrictMode>
+                <Switch>
+                    <Route exact path="/" component={LoginPage}/>
+                    <Route exact path="/dashboard" component={App}/>
+                </Switch>
+            </React.StrictMode>
+        </BrowserRouter>
+    </CookiesProvider>
 );
 
 ReactDOM.render(routing, document.getElementById('root'));

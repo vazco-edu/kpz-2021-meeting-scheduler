@@ -1,5 +1,5 @@
 import React, {ChangeEvent} from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
@@ -7,30 +7,31 @@ import Typography from '@material-ui/core/Typography';
 import {Checkbox} from "@material-ui/core";
 
 interface MyProps {
-    id: string,
-    summary: string,
-    description: string;
+    id: string | undefined,
+    summary: string | undefined,
+    description: string | undefined;
 }
 
 interface MyState {
     checked: boolean;
 }
 
-export default class CalendarCard extends React.Component<MyProps, MyState>  {
+export default class CalendarCard extends React.Component<MyProps, MyState> {
 
     constructor(MyProps: MyProps | Readonly<MyProps>) {
         super(MyProps);
-        this.state = {checked: true}
+        this.state = {
+            checked: true
+        }
         this.handleChange = this.handleChange.bind(this);
 
     }
 
     handleChange(event: ChangeEvent) {
         this.setState({checked: !this.state.checked});
-        console.log(this.state.checked)
     }
 
-    render(){
+    render() {
         const useStyles = makeStyles({
             root: {
                 minWidth: 275,

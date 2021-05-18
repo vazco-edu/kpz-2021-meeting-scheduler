@@ -10,7 +10,7 @@ const sendToken = async(profileInfo : any) => {
     console.log(profileInfo);
 
     try{
-        
+
         let django = await axios.post(
             "http://127.0.0.1:8000/api/custom-tokens/",
             {
@@ -18,7 +18,7 @@ const sendToken = async(profileInfo : any) => {
             }
         )
         console.log(django.data);
-        
+
         let res = await axios.post(
             "http://127.0.0.1:8000/dj-rest-auth/google/",
             {
@@ -40,20 +40,10 @@ const sendToken = async(profileInfo : any) => {
                 refresh_token: localStorage.getItem("google_refresh_token"),
             }
         ).then(calendars => {
-            // let calendarForm = []
-            // for (let calendar of calendars.data) {
-            //     calendarForm.push(<CalendarCard id={calendar.id} summary={calendar.summary}  description={calendar.description}/>)
-            // }
-            // const submitButton = <input type={onsubmit()} value="Send"></input>
-            // calendarForm.push(submitButton)
-            // ReactDOM.render(calendarForm, document.getElementById('calendars'))
-            console.log(calendars.data)
-            let calendarList: CalendarCard[] | any = []
+            let calendarList: CalendarFromResponse[] = []
             for (let calendar of calendars.data) {
-
-                calendarList.push(<CalendarCard id={calendar.id} summary={calendar.summary} description={calendar.description} />)
+                calendarList.push(new CalendarFromResponse(calendar.id, calendar.summary, calendar.description))
             }
-
             ReactDOM.render(<CalendarForm calendarList={calendarList}/>
             , document.getElementById('calendars'))
         })
@@ -61,10 +51,10 @@ const sendToken = async(profileInfo : any) => {
 
 
         return res;
-        
+
     } catch(err){
         console.log(err.message);
-        
+
     }
 
 };

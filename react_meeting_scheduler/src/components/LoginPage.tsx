@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Link from '@material-ui/core/Link';
+import  { Redirect } from 'react-router-dom'
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -45,7 +45,18 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignInSide() {
     const classes = useStyles();
+    const [isAuthorized, setAuthorized] = useState(false);
 
+    let callback = (isAuth: boolean) => {
+        setAuthorized(isAuth);
+    }
+    console.log(isAuthorized)
+
+    if(isAuthorized){
+        return (
+            <Redirect to='/home'/>
+        )
+    }
     return (
         <Grid container component="main" className={classes.root}>
             <CssBaseline/>
@@ -66,7 +77,7 @@ export default function SignInSide() {
                         </Box>
                     </Typography>
 
-                    <GoogleForm/>
+                    <GoogleForm parentCallback={callback}/>
 
                     <Box mt={5}>
                         {Copyright}

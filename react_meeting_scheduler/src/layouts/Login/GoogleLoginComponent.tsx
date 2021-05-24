@@ -1,6 +1,6 @@
 import React from "react";
 import {GoogleLogin} from "react-google-login";
-import sendToken from "../GoogleLoginService"
+import sendToken from "../../services/GoogleLoginService"
 
 const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY+""
 interface GoogleButtonProps {

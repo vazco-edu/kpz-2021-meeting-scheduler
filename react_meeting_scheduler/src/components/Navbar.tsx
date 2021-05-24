@@ -13,7 +13,7 @@ import Drawer from "@material-ui/core/Drawer";
 import ChevronLeftIcon from "@material-ui/icons/ChevronLeft";
 import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
-import {mainListItems, secondaryListItems} from "./ListItems";
+import {mainListItems} from "./ListItems";
 import {makeStyles} from "@material-ui/core/styles";
 
 const drawerWidth = 240;
@@ -131,8 +131,6 @@ export default function Dashboard() {
                 </div>
                 <Divider/>
                 <List>{mainListItems}</List>
-                <Divider/>
-                <List>{secondaryListItems}</List>
             </Drawer>
         </React.Fragment>
     );

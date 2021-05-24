@@ -1,5 +1,4 @@
 import axios from "axios";
-import { profile } from "node:console";
 import React from "react";
 
 interface Props{

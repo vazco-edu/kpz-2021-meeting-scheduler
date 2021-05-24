@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import Dashboard from "./components/Dashboard";
-import Navbar from './components/Navbar';
+import Dashboard from "./Dashboard";
+import Navbar from '../../components/Navbar';
 import {makeStyles} from "@material-ui/core/styles";
 
 // interface Props {
@@ -35,13 +35,14 @@ const authAxios = axios.create({
 //     return <Redirect to="/" />;
 //   }
 
+
+
 class App extends Component {
 
     render() {
 
         return (
             <div className="App">
-                {/*<Navbar />*/}
                 <Dashboard />
             </div>
         )

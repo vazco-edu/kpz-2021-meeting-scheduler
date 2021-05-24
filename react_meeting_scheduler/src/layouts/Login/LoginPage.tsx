@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import  { Redirect } from 'react-router-dom'
+import { useLocation, Redirect } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -9,7 +9,7 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import GoogleForm from "./GoogleLoginComponent";
-import {Copyright} from "./Copyright";
+import Copyright from "../../components/Copyright";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
         height: '100vh',
     },
     image: {
-        backgroundImage: 'url(https://source.unsplash.com/random)',
+        backgroundImage: 'url(/media/login-bg.jpg)',
         backgroundRepeat: 'no-repeat',
         backgroundColor:
             theme.palette.type === 'light' ? theme.palette.grey[50] : theme.palette.grey[900],
@@ -43,8 +43,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-export default function SignInSide() {
+const LoginPage = () => {
     const classes = useStyles();
+    const location = useLocation();
     const [isAuthorized, setAuthorized] = useState(false);
 
     let callback = (isAuth: boolean) => {
@@ -80,10 +81,12 @@ export default function SignInSide() {
                     <GoogleForm parentCallback={callback}/>
 
                     <Box mt={5}>
-                        {Copyright}
+                        <Copyright/>
                     </Box>
                 </div>
             </Grid>
         </Grid>
     );
 }
+
+export default LoginPage;

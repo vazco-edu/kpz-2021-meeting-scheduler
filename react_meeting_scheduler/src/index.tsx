@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
 import {Route, BrowserRouter, Switch} from 'react-router-dom';
+import {CookiesProvider} from "react-cookie";
+
+import App from './layouts/App/App';
 import reportWebVitals from './reportWebVitals';
-import {CookiesProvider, Cookies} from "react-cookie";
-import LoginPage from "./components/LoginPage";
+import LoginPage from "./layouts/Login/LoginPage";
+
 
 
 const routing = (
@@ -13,8 +14,8 @@ const routing = (
         <BrowserRouter>
             <React.StrictMode>
                 <Switch>
-                    <Route exact path="/" component={LoginPage}/>
-                    <Route exact path="/dashboard" component={App}/>
+                    <Route exact path="/" render={(props) => <LoginPage  />}  />
+                    <Route path="/dashboard" render={(props) => <App {...props} />}  />
                 </Switch>
             </React.StrictMode>
         </BrowserRouter>

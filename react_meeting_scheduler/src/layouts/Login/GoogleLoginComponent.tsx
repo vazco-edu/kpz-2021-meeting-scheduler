@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import {GoogleLogin} from "react-google-login";
+import sendToken from "../../services/GoogleLoginService"
 import axios from "axios";
 
 const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY+""

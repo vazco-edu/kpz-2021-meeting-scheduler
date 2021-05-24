@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import clsx from 'clsx';
 import {makeStyles} from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
@@ -36,9 +36,20 @@ const Dashboard = () => {
     const classes = useStyles();
     const location = useLocation();
 
+
     React.useEffect(() => {
         document.documentElement.scrollTop = 0;
     }, [location]);
+
+    const [isAuthorized, setAuthorized] = useState(false);
+
+    console.log(isAuthorized)
+
+    // if(! isAuthorized){
+    //     return (
+    //         <Redirect to='/'/>
+    //     )
+    // }
 
     const getRoutes = (routes: any[]) => {
         return routes.map((prop, key) => {

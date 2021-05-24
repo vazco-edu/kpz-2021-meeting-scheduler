@@ -55,7 +55,7 @@ const LoginPage = () => {
 
     if(isAuthorized){
         return (
-            <Redirect to='/home'/>
+            <Redirect to='/dashboard'/>
         )
     }
     return (

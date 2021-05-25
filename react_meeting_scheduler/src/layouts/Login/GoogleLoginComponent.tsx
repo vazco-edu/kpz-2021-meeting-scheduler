@@ -1,23 +1,27 @@
 import React, {useState} from "react";
 import {GoogleLogin} from "react-google-login";
 import axios from "axios";
+import CalendarFromResponse from "../../components/CalendarFromResponse";
+import ReactDOM from "react-dom";
+import CalendarForm from "../../components/CalendarForm";
 
-const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY+""
+const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY + ""
+
 interface GoogleButtonProps {
     parentCallback: any;
 }
 
-const GoogleForm: React.FC<GoogleButtonProps> = ({ parentCallback }) => {
+const GoogleForm: React.FC<GoogleButtonProps> = ({parentCallback}) => {
     const [isAuth, setAuth] = useState(false);
 
     const responseGoogle = (response: any) => {
         console.log(response)
     }
 
-    const sendToken = async(profileInfo : any) => {
+    const sendToken = async (profileInfo: any) => {
         console.log(profileInfo);
 
-        try{
+        try {
 
             let django = await axios.post(
                 "http://127.0.0.1:8000/api/custom-tokens/",
@@ -44,19 +48,26 @@ const GoogleForm: React.FC<GoogleButtonProps> = ({ parentCallback }) => {
             let calendars = await axios.post(
                 "http://127.0.0.1:8000/api/calendars/list",
                 {
-                    access_token: localStorage.getItem("google_access_token")+"",
+                    access_token: localStorage.getItem("google_access_token") + "",
                     refresh_token: localStorage.getItem("google_refresh_token"),
                 }
-            )
+            ).then(calendars => {
+                let calendarList: CalendarFromResponse[] = []
+                for (let calendar of calendars.data) {
+                    calendarList.push(new CalendarFromResponse(calendar.id, calendar.summary, calendar.description))
+                }
+                // ReactDOM.render(<CalendarForm calendarList={calendarList}/>
+                // , document.getElementById('calendars'))
+                localStorage.setItem("calendar", JSON.stringify(calendarList));
+            })
 
-            console.log(calendars.data);
 
             setAuth(true);
             parentCallback(true);
 
             return res;
 
-        } catch(err){
+        } catch (err) {
             console.log(err.message);
 
         }

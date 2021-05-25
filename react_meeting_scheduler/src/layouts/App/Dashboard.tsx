@@ -44,6 +44,7 @@ const Dashboard = () => {
     const [isAuthorized, setAuthorized] = useState(false);
 
     console.log(isAuthorized)
+    console.log(localStorage.getItem("calendar"))
 
     // if(! isAuthorized){
     //     return (

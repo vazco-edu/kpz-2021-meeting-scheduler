@@ -10,6 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import GoogleForm from "./GoogleLoginComponent";
 import Copyright from "../../components/Copyright";
+import Dashboard from "../App/Dashboard";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -85,6 +86,8 @@ const LoginPage = () => {
                     </Box>
                 </div>
             </Grid>
+            <div id='calendars'>
+            </div>
         </Grid>
     );
 }

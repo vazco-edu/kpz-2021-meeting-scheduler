@@ -3,16 +3,13 @@ import CalendarCard from "./CalendarCard";
 import CalendarFromResponse from "./CalendarFromResponse";
 import axios from "axios";
 
-interface MyProps {
-    calendarList: CalendarFromResponse[];
-}
-
 interface MyState {
     calendarsChecked: string[];
 }
 
-export default class CalendarForm extends React.Component<MyProps, MyState> {
-    constructor(props: MyProps | Readonly<MyProps>) {
+export default class CalendarForm extends React.Component<any , MyState> {
+    calendarList: CalendarFromResponse[] ;
+    constructor(props: any) {
         super(props);
         this.state = {
             calendarsChecked: [] = []
@@ -51,11 +48,14 @@ export default class CalendarForm extends React.Component<MyProps, MyState> {
         })
     }
 
+
+
     render() {
+        this.calendarList = JSON.parse(localStorage.getItem("calendar")) as CalendarFromResponse[];
         return (
             <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-                {this.props.calendarList.map(calendar => <CalendarCard id={calendar.id} summary={calendar.summary}
-                                                                       description={calendar.description}/>)}
+                {this.calendarList != null ? this.calendarList.map(calendar => <CalendarCard id={calendar.id} summary={calendar.summary}
+                                                                                             description={calendar.description}/>) : console.log("Empty calendar list!")}
                 <input type="submit" value="Send"/>
             </form>
         );

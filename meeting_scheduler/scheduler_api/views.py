@@ -13,6 +13,7 @@ from dj_rest_auth.registration.views import SocialLoginView, SocialConnectView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 
 from .models import Calendar
+from .Blocks import Block
 
 def get_google_token(access_token, refresh_token, 
                     client_id=os.environ.get('CLIENT_ID'), 
@@ -237,6 +238,9 @@ def google_data(request, format=None):
     elif request.method == "POST":
         #print (f'=========================== received data: {request.data["x"]}')
         #print(f'token: {request.data["token"]}')
+        print(os.environ.get('CLIENT_ID'))
+        print(os.environ.get('SECRET_GOOGLE'))
+        print(os.environ.get('REDIRECT_URI'))
         data = {
             "code": request.data['code'],
             "client_id": os.environ.get('CLIENT_ID'),
@@ -245,12 +249,90 @@ def google_data(request, format=None):
             "grant_type": "authorization_code"
         }
 
+        #print(data)
         req = requests.post("https://oauth2.googleapis.com/token", data=data)
-
+        #print(req)
         json_data = json.loads(req.text)
 
-        return Response(json_data)
-        
+        return Response(data=json_data, status=200)
+
+# @permission_classes([IsAuthenticated])
+@api_view(["POST"])
+@parser_classes([JSONParser])      
+def simple_algorithm(request):
+    service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
+    meetings_date = []
+    meetings_blocks = []
+    all_members_events = dict()
+    
+    today = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_min = request.GET.get('time_min', today)
+
+    today_plus_ten = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_max = request.GET.get('time_max', today_plus_ten)
+    
+    for calendar in request.data["calendars"]:
+        events_result = service.events().list(calendarId=calendar, 
+                                            timeMin=time_min,
+                                            timeMax=time_max, 
+                                            singleEvents=True,
+                                            orderBy='startTime').execute()
+        all_members_events[calendar] = events_result.get('items', [])
+    #if not events:
+    #    return Response('No results', status=204)
+    for e in all_members_events:
+        for listing in all_members_events[e]:
+            meetings_date.append(
+                {
+                    'starts':datetime.datetime.strptime(listing["start"]["dateTime"][:-6],"%Y-%m-%dT%H:%M:%S"),
+                    'ends':datetime.datetime.strptime(listing["end"]["dateTime"][:-6],"%Y-%m-%dT%H:%M:%S")
+                }
+            )       
+    sorted_meetings = sorted(
+        meetings_date,
+        key=lambda x: x['starts']
+    )
+    meetings_blocks.append(Block(sorted_meetings[0]['starts'],sorted_meetings[0]['ends']))
+
+    for i in range(1, len(sorted_meetings)):
+        found_overlaping = False
+        for block in meetings_blocks:
+            if sorted_meetings[i]['starts'] <= block.ends:
+                found_overlaping = True
+                if sorted_meetings[i]['ends'] >= block.ends:
+                    block.extend_block_ending(sorted_meetings[i]['ends'])
+                else:
+                    pass
+        if not found_overlaping:
+            meetings_blocks.append(Block(sorted_meetings[i]['starts'],sorted_meetings[i]['ends']))
+
+    today = (datetime.datetime.utcnow() + datetime.timedelta(hours=2)).isoformat() + 'Z'
+    print(today)
+    today = datetime.datetime.strptime(today[:-8],"%Y-%m-%dT%H:%M:%S")
+
+    today_in_5hrs = (datetime.datetime.utcnow() + datetime.timedelta(hours=7)).isoformat()
+    today_in_5hrs = datetime.datetime.strptime(today_in_5hrs[:-8],"%Y-%m-%dT%H:%M:%S")
+
+    duration = datetime.timedelta(minutes=45)
+    for m in meetings_blocks:
+        print(m)
+    if meetings_blocks[0].starts - today > duration:
+
+        return Response(f"Jest taki termin, przed wszystkimi, {meetings_blocks[0].starts - today}")
+    else:
+        for idx in range(1,len(meetings_blocks)):
+            if meetings_blocks[idx-1].ends - meetings_blocks[idx-1].starts > duration:
+                return Response(f"znaleziono termin między blokami, o godzinie {meetings_blocks[idx-1].ends}")
+    if meetings_blocks[-1].ends - today_in_5hrs > duration:
+        return Response("Jest taki termin po wszystkich blokach")
+
+    return Response("Nie znaleziono nic")
+
+
+    print(sorted_meetings)
+    events_json = json.dumps(all_members_events)
+
+    return Response(events_json)
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter

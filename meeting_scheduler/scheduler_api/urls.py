@@ -12,5 +12,7 @@ urlpatterns = [
     path('custom-tokens/', views.google_data, name="googledata"),
     path('dj-rest-auth/google/', views.GoogleLogin.as_view(), name='google-login'),
     path('calendars/s-algorithm', views.simple_algorithm, name='simple_algorithm'),
+    path('calendars/algorithm', views.simple_algorithm_v2, name='algorithm'),
+    path('calendars/insert', views.insert_meetings, name="Arrange meetings")
 ]
 

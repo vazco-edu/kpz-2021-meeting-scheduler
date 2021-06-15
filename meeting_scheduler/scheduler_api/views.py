@@ -14,6 +14,7 @@ from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 
 from .models import Calendar
 from .Blocks import Block
+from .alg import get_free_blocks 
 
 def get_google_token(access_token, refresh_token, 
                     client_id=os.environ.get('CLIENT_ID'), 
@@ -260,6 +261,25 @@ def google_data(request, format=None):
 @api_view(["POST"])
 @parser_classes([JSONParser])      
 def simple_algorithm(request):
+    """
+    Provide necessary data to generate google API access and refresh token
+    :param request: {
+        "access_token": string,
+        "refresh_token": string,
+        "calendars": list[str],
+        "beginning_date": "2021-06-15 15:50:52.236664Z",
+        "ending_date": "2021-06-16 15:50:52.236664Z",
+        "beggining_hours": 12,
+        "beggining_minutes": 30,
+        "ending_hours": 16,
+        "ending_minutes": 00,
+        "meeting_duration_hours": 2,
+        "meeting_duration_minutes": 30,
+        "meeting_name": "meeting_name"
+        }
+    :param format:
+    :return:
+    """
     service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
     meetings_date = []
     meetings_blocks = []
@@ -313,7 +333,8 @@ def simple_algorithm(request):
     today_in_5hrs = (datetime.datetime.utcnow() + datetime.timedelta(hours=7)).isoformat()
     today_in_5hrs = datetime.datetime.strptime(today_in_5hrs[:-8],"%Y-%m-%dT%H:%M:%S")
 
-    duration = datetime.timedelta(minutes=45)
+    duration = datetime.timedelta(hours=2)
+    
     for m in meetings_blocks:
         print(m)
     if meetings_blocks[0].starts - today > duration:
@@ -333,6 +354,80 @@ def simple_algorithm(request):
     events_json = json.dumps(all_members_events)
 
     return Response(events_json)
+
+
+@api_view(["POST"])
+@parser_classes([JSONParser])      
+def simple_algorithm_v2(request):
+    
+    service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
+    today = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_min = request.GET.get('beginning_date', today)
+
+    today_plus_seven = (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_max = request.GET.get('ending_date', today_plus_seven)
+    
+    response = get_free_blocks(
+        request=request,
+        service=service,
+        calendars=request.data["calendars"],
+        #beginning_date="2021-06-15T07:40:00.000000Z",
+        beginning_date="2021-06-15",
+        ending_date="2021-06-15",
+        beginning_hours=6,
+        beginning_minutes=40,
+        ending_hours=19,
+        ending_minutes=00,
+        duration_hours=1,
+        duration_minutes=0,
+    )
+    
+    # return Response(f"{today} --- type --- {type(today)}")
+    return response
+
+@api_view(["POST"])
+@parser_classes([JSONParser])  
+def insert_meetings(request):
+    service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
+
+    hours = request.data["duration_hours"]
+    minutes = request.data["duration_minutes"]
+
+    start = request.data["date"]
+    end = datetime.datetime.strptime(start,"%Y-%m-%dT%H:%M:%S")+datetime.timedelta(hours=hours,minutes=minutes)
+    end = datetime.datetime.strftime(end,"%Y-%m-%dT%H:%M:%S") + ".000000Z"
+    start = request.data["date"] + ".000000Z"
+
+    event = {
+        'summary': 'Test',
+        'location': 'Wroclaw, Poland',
+        'description': 'desc',
+        'start': {
+            'dateTime': '2021-06-17T09:00:00+02:00',
+            'timeZone': 'Europe/Warsaw',
+        },
+        'end': {
+            'dateTime': '2021-06-17T17:00:00+02:00',
+            'timeZone': 'Europe/Warsaw',
+        },
+        'recurrence': [
+            'RRULE:FREQ=DAILY;COUNT=2'
+        ],
+        'attendees': [
+            {'email': 'hulewicz.k@gmail.com'},
+        ],
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+    }
+
+    # for calendar in request.data["calendars"]:
+    event = service.events().insert(calendarId=request.data["calendars"][0], body=event).execute()
+    return Response(data=event, status=200)
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter

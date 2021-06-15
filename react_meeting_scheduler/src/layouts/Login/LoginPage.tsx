@@ -54,6 +54,10 @@ const LoginPage = () => {
     }
     console.log(isAuthorized)
 
+    if(localStorage.getItem("access_token")){
+        return <Redirect to={'/dashboard'}/>;
+    }
+
     if(isAuthorized){
         return (
             <Redirect to='/dashboard'/>

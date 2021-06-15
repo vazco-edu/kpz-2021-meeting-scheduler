@@ -2,8 +2,6 @@ import React, {useState} from "react";
 import {GoogleLogin} from "react-google-login";
 import axios from "axios";
 import CalendarFromResponse from "../../components/CalendarFromResponse";
-import ReactDOM from "react-dom";
-import CalendarForm from "../../components/CalendarForm";
 
 const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY + ""
 

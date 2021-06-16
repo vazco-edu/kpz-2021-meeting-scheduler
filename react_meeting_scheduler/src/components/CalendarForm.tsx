@@ -23,13 +23,14 @@ interface IRequestData {
     "ending_minutes": string,
     "meeting_duration_hours": string,
     "meeting_duration_minutes": string,
-    "google_refresh_token": string,
-    "google_access_token": string
+    "refresh_token": string,
+    "access_token": string
  }
 
 interface IResponseData {
+    data: any;
     calendars: string[];
-    dates: Date[];
+    dates: string[];
     duration_hours: number;
     duration_minutes: number;
 }
@@ -67,7 +68,7 @@ export default class CalendarForm extends React.Component<any , MyState> {
         }
     }
 
-    handleSubmit(event: React.ChangeEvent<HTMLInputElement> | any) {
+    async handleSubmit(event: React.ChangeEvent<HTMLInputElement> | any) {
         this.setState({
             isSubmitted: true
         })
@@ -89,25 +90,20 @@ export default class CalendarForm extends React.Component<any , MyState> {
         body.ending_minutes = ending_minutes
         body.meeting_duration_hours = meeting_duration_hours
         body.meeting_duration_minutes = meeting_duration_minutes
-        body.google_access_token = localStorage.getItem("google_access_token")
-        body.google_refresh_token = localStorage.getItem("google_refresh_token")
+        body.access_token = localStorage.getItem("google_access_token")
+        body.refresh_token = localStorage.getItem("google_refresh_token")
+        
+        let a = await axios.post(
+            "http://localhost:8000/api/calendars/algorithm", body
+        )
 
-        axios.post(
-            "http://localhost:8000/api/calendars/algorithm",
-            {
-                body
-            }
-        ).then(response => {
-            let responseData = response as unknown as IResponseData
-            localStorage.setItem("dates", JSON.stringify(responseData.dates));
-            localStorage.setItem("calendars", JSON.stringify(responseData.calendars));
-            localStorage.setItem("duration_hours", JSON.stringify(responseData.duration_hours));
-            localStorage.setItem("duration_minutes", JSON.stringify(responseData.duration_minutes));
-            localStorage.setItem("duration_minutes", JSON.stringify(responseData.duration_minutes));
-        })
+        let responseData = a as unknown as IResponseData
+        console.log(responseData);
+        localStorage.setItem("dates", JSON.stringify(responseData.data.dates));
+        localStorage.setItem("calendars", JSON.stringify(responseData.data.calendars));
+        localStorage.setItem("duration_hours", JSON.stringify(responseData.data.duration_hours));
+        localStorage.setItem("duration_minutes", JSON.stringify(responseData.data.duration_minutes));      
     }
-
-
 
     render() {
         if(this.state.isSubmitted){

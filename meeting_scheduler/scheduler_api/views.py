@@ -359,15 +359,13 @@ def simple_algorithm(request):
 @api_view(["POST"])
 @parser_classes([JSONParser])      
 def simple_algorithm_v2(request):
-    
     service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
     today = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
     time_min = request.GET.get('beginning_date', today)
 
     today_plus_seven = (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'  # 'Z' indicates UTC time
     time_max = request.GET.get('ending_date', today_plus_seven)
-    print(request.data)
-    response = get_free_blocks(
+    data = get_free_blocks(
         request=request,
         service=service,
         calendars=request.data["calendars"],
@@ -378,12 +376,15 @@ def simple_algorithm_v2(request):
         beginning_minutes=int(request.data["beginning_minutes"]),
         ending_hours=int(request.data["ending_hours"]),
         ending_minutes=int(request.data["ending_minutes"]),
-        duration_hours=int(request.data["duration_hours"]),
-        duration_minutes=int(request.data["duration_minutes"]),
+        duration_hours=int(request.data["meeting_duration_hours"]),
+        duration_minutes=int(request.data["meeting_duration_minutes"]),
     )
     
     # return Response(f"{today} --- type --- {type(today)}")
-    return response
+    
+    print(data)
+    
+    return Response(data,status=200)
 
 @api_view(["POST"])
 @parser_classes([JSONParser])  

@@ -14,7 +14,7 @@ interface MyState {
     isSubmitted: boolean;
 }
 interface IRequestData {
-    calendars: string[];
+    calendars: string[],
     "beginning_date": string,
     "ending_date": string,
     "beginning_hours": string,
@@ -23,7 +23,9 @@ interface IRequestData {
     "ending_minutes": string,
     "meeting_duration_hours": string,
     "meeting_duration_minutes": string,
-}
+    "google_refresh_token": string,
+    "google_access_token": string
+ }
 
 interface IResponseData {
     calendars: string[];
@@ -87,6 +89,8 @@ export default class CalendarForm extends React.Component<any , MyState> {
         body.ending_minutes = ending_minutes
         body.meeting_duration_hours = meeting_duration_hours
         body.meeting_duration_minutes = meeting_duration_minutes
+        body.google_access_token = localStorage.getItem("google_access_token")
+        body.google_refresh_token = localStorage.getItem("google_refresh_token")
 
         axios.post(
             "http://localhost:8000/api/calendars/algorithm",

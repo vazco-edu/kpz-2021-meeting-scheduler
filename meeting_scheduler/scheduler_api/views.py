@@ -13,6 +13,8 @@ from dj_rest_auth.registration.views import SocialLoginView, SocialConnectView
 from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
 
 from .models import Calendar
+from .Blocks import Block
+from .alg import get_free_blocks 
 
 def get_google_token(access_token, refresh_token, 
                     client_id=os.environ.get('CLIENT_ID'), 
@@ -237,6 +239,9 @@ def google_data(request, format=None):
     elif request.method == "POST":
         #print (f'=========================== received data: {request.data["x"]}')
         #print(f'token: {request.data["token"]}')
+        print(os.environ.get('CLIENT_ID'))
+        print(os.environ.get('SECRET_GOOGLE'))
+        print(os.environ.get('REDIRECT_URI'))
         data = {
             "code": request.data['code'],
             "client_id": os.environ.get('CLIENT_ID'),
@@ -245,12 +250,184 @@ def google_data(request, format=None):
             "grant_type": "authorization_code"
         }
 
+        #print(data)
         req = requests.post("https://oauth2.googleapis.com/token", data=data)
-
+        #print(req)
         json_data = json.loads(req.text)
 
-        return Response(json_data)
-        
+        return Response(data=json_data, status=200)
+
+# @permission_classes([IsAuthenticated])
+@api_view(["POST"])
+@parser_classes([JSONParser])      
+def simple_algorithm(request):
+    """
+    Provide necessary data to generate google API access and refresh token
+    :param request: {
+        "access_token": string,
+        "refresh_token": string,
+        "calendars": list[str],
+        "beginning_date": "2021-06-15 15:50:52.236664Z",
+        "ending_date": "2021-06-16 15:50:52.236664Z",
+        "beggining_hours": 12,
+        "beggining_minutes": 30,
+        "ending_hours": 16,
+        "ending_minutes": 00,
+        "meeting_duration_hours": 2,
+        "meeting_duration_minutes": 30,
+        "meeting_name": "meeting_name"
+        }
+    :param format:
+    :return:
+    """
+    service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
+    meetings_date = []
+    meetings_blocks = []
+    all_members_events = dict()
+    
+    today = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_min = request.GET.get('time_min', today)
+
+    today_plus_ten = (datetime.datetime.utcnow() + datetime.timedelta(days=1)).isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_max = request.GET.get('time_max', today_plus_ten)
+    
+    for calendar in request.data["calendars"]:
+        events_result = service.events().list(calendarId=calendar, 
+                                            timeMin=time_min,
+                                            timeMax=time_max, 
+                                            singleEvents=True,
+                                            orderBy='startTime').execute()
+        all_members_events[calendar] = events_result.get('items', [])
+    #if not events:
+    #    return Response('No results', status=204)
+    for e in all_members_events:
+        for listing in all_members_events[e]:
+            meetings_date.append(
+                {
+                    'starts':datetime.datetime.strptime(listing["start"]["dateTime"][:-6],"%Y-%m-%dT%H:%M:%S"),
+                    'ends':datetime.datetime.strptime(listing["end"]["dateTime"][:-6],"%Y-%m-%dT%H:%M:%S")
+                }
+            )       
+    sorted_meetings = sorted(
+        meetings_date,
+        key=lambda x: x['starts']
+    )
+    meetings_blocks.append(Block(sorted_meetings[0]['starts'],sorted_meetings[0]['ends']))
+
+    for i in range(1, len(sorted_meetings)):
+        found_overlaping = False
+        for block in meetings_blocks:
+            if sorted_meetings[i]['starts'] <= block.ends:
+                found_overlaping = True
+                if sorted_meetings[i]['ends'] >= block.ends:
+                    block.extend_block_ending(sorted_meetings[i]['ends'])
+                else:
+                    pass
+        if not found_overlaping:
+            meetings_blocks.append(Block(sorted_meetings[i]['starts'],sorted_meetings[i]['ends']))
+
+    today = (datetime.datetime.utcnow() + datetime.timedelta(hours=2)).isoformat() + 'Z'
+    print(today)
+    today = datetime.datetime.strptime(today[:-8],"%Y-%m-%dT%H:%M:%S")
+
+    today_in_5hrs = (datetime.datetime.utcnow() + datetime.timedelta(hours=7)).isoformat()
+    today_in_5hrs = datetime.datetime.strptime(today_in_5hrs[:-8],"%Y-%m-%dT%H:%M:%S")
+
+    duration = datetime.timedelta(hours=2)
+    
+    for m in meetings_blocks:
+        print(m)
+    if meetings_blocks[0].starts - today > duration:
+
+        return Response(f"Jest taki termin, przed wszystkimi, {meetings_blocks[0].starts - today}")
+    else:
+        for idx in range(1,len(meetings_blocks)):
+            if meetings_blocks[idx-1].ends - meetings_blocks[idx-1].starts > duration:
+                return Response(f"znaleziono termin między blokami, o godzinie {meetings_blocks[idx-1].ends}")
+    if meetings_blocks[-1].ends - today_in_5hrs > duration:
+        return Response("Jest taki termin po wszystkich blokach")
+
+    return Response("Nie znaleziono nic")
+
+
+    print(sorted_meetings)
+    events_json = json.dumps(all_members_events)
+
+    return Response(events_json)
+
+
+@api_view(["POST"])
+@parser_classes([JSONParser])      
+def simple_algorithm_v2(request):
+    
+    service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
+    today = datetime.datetime.utcnow().isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_min = request.GET.get('beginning_date', today)
+
+    today_plus_seven = (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'  # 'Z' indicates UTC time
+    time_max = request.GET.get('ending_date', today_plus_seven)
+    
+    response = get_free_blocks(
+        request=request,
+        service=service,
+        calendars=request.data["calendars"],
+        #beginning_date="2021-06-15T07:40:00.000000Z",
+        beginning_date="2021-06-15",
+        ending_date="2021-06-15",
+        beginning_hours=6,
+        beginning_minutes=40,
+        ending_hours=19,
+        ending_minutes=00,
+        duration_hours=1,
+        duration_minutes=0,
+    )
+    
+    # return Response(f"{today} --- type --- {type(today)}")
+    return response
+
+@api_view(["POST"])
+@parser_classes([JSONParser])  
+def insert_meetings(request):
+    service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
+
+    hours = request.data["duration_hours"]
+    minutes = request.data["duration_minutes"]
+
+    start = request.data["date"]
+    end = datetime.datetime.strptime(start,"%Y-%m-%dT%H:%M:%S")+datetime.timedelta(hours=hours,minutes=minutes)
+    end = datetime.datetime.strftime(end,"%Y-%m-%dT%H:%M:%S") + ".000000Z"
+    start = request.data["date"] + ".000000Z"
+
+    event = {
+        'summary': 'Test',
+        'location': 'Wroclaw, Poland',
+        'description': 'desc',
+        'start': {
+            'dateTime': '2021-06-17T09:00:00+02:00',
+            'timeZone': 'Europe/Warsaw',
+        },
+        'end': {
+            'dateTime': '2021-06-17T17:00:00+02:00',
+            'timeZone': 'Europe/Warsaw',
+        },
+        'recurrence': [
+            'RRULE:FREQ=DAILY;COUNT=2'
+        ],
+        'attendees': [
+            {'email': 'hulewicz.k@gmail.com'},
+        ],
+        'reminders': {
+            'useDefault': False,
+            'overrides': [
+                {'method': 'email', 'minutes': 24 * 60},
+                {'method': 'popup', 'minutes': 10},
+            ],
+        },
+    }
+
+    # for calendar in request.data["calendars"]:
+    event = service.events().insert(calendarId=request.data["calendars"][0], body=event).execute()
+    return Response(data=event, status=200)
 
 class GoogleLogin(SocialLoginView):
     adapter_class = GoogleOAuth2Adapter

@@ -106,7 +106,7 @@ def generate_viable_starting_dates(
             and complete_ending_date - meeting_blocks[-1].ends > meeting_duration):
             while not tmp_date + meeting_duration > meeting_blocks[0].starts:
                 _.append((tmp_date).strftime("%Y-%m-%dT%H:%M:%S"))
-                tmp_date += datetime.timedelta(minutes=5)
+                tmp_date += datetime.timedelta(minutes=5)#
 
     return _
 

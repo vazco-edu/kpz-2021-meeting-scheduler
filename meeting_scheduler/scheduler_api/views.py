@@ -366,20 +366,20 @@ def simple_algorithm_v2(request):
 
     today_plus_seven = (datetime.datetime.utcnow() + datetime.timedelta(days=7)).isoformat() + 'Z'  # 'Z' indicates UTC time
     time_max = request.GET.get('ending_date', today_plus_seven)
-    
+    print(request.data)
     response = get_free_blocks(
         request=request,
         service=service,
         calendars=request.data["calendars"],
         #beginning_date="2021-06-15T07:40:00.000000Z",
-        beginning_date="2021-06-15",
-        ending_date="2021-06-15",
-        beginning_hours=6,
-        beginning_minutes=40,
-        ending_hours=19,
-        ending_minutes=00,
-        duration_hours=1,
-        duration_minutes=0,
+        beginning_date=request.data["beginning_date"],
+        ending_date=request.data["ending_date"],
+        beginning_hours=int(request.data["beginning_hours"]),
+        beginning_minutes=int(request.data["beginning_minutes"]),
+        ending_hours=int(request.data["ending_hours"]),
+        ending_minutes=int(request.data["ending_minutes"]),
+        duration_hours=int(request.data["duration_hours"]),
+        duration_minutes=int(request.data["duration_minutes"]),
     )
     
     # return Response(f"{today} --- type --- {type(today)}")
@@ -414,7 +414,7 @@ def insert_meetings(request):
             'RRULE:FREQ=DAILY;COUNT=2'
         ],
         'attendees': [
-            {'email': 'hulewicz.k@gmail.com'},
+            #{'email': 'hulewicz.k@gmail.com'},
         ],
         'reminders': {
             'useDefault': False,
@@ -425,8 +425,8 @@ def insert_meetings(request):
         },
     }
 
-    # for calendar in request.data["calendars"]:
-    event = service.events().insert(calendarId=request.data["calendars"][0], body=event).execute()
+    for calendar in request.data["calendars"]:
+        event = service.events().insert(calendarId=request.data["calendars"][0], body=event).execute()
     return Response(data=event, status=200)
 
 class GoogleLogin(SocialLoginView):

@@ -32,12 +32,12 @@ const routes = [
     component: ScheduleEvent,
     layout: "/dashboard",
   },
-  {
-    path: "/reports",
-    name: "Reports",
-    icon: BarChartIcon,
-    component: Copyright,
-    layout: "/dashboard",
-  },
+  // {
+  //   path: "/reports",
+  //   name: "Reports",
+  //   icon: BarChartIcon,
+  //   component: Copyright,
+  //   layout: "/dashboard",
+  // },
 ];
 export default routes;

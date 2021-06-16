@@ -1,12 +1,13 @@
 import React from "react";
-import CalendarFromResponse from "./CalendarFromResponse";
-import {Hidden, MenuItem, TextField} from "@material-ui/core";
+import {MenuItem, TextField} from "@material-ui/core";
 import Card from "@material-ui/core/Card";
 import CardContent from "@material-ui/core/CardContent";
 import Typography from "@material-ui/core/Typography";
-import CardActions from "@material-ui/core/CardActions";
 import axios from "axios";
-import {Redirect} from "react-router-dom";
+import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
+import Copyright from "./Copyright";
+import Button from "@material-ui/core/Button";
 
 
 interface MyState {
@@ -16,22 +17,22 @@ interface MyState {
 }
 
 const dates = [
-  {
-    value: '2021-06-15 15:00:00.000000Z',
-    label: '2021-06-15 15:00',
-  },
-  {
-    value: '2021-06-15 15:15:00.000000Z',
-    label: '2021-06-15 15:15',
-  },
-  {
-    value: '2021-06-15 15:30:00.000000Z',
-    label: '2021-06-15 15:30',
-  },
-  {
-    value: '2021-06-15 15:45:00.000000Z',
-    label: '2021-06-15 15:45',
-  },
+    {
+        value: '2021-06-15 15:00:00.000000Z',
+        label: '2021-06-15 15:00',
+    },
+    {
+        value: '2021-06-15 15:15:00.000000Z',
+        label: '2021-06-15 15:15',
+    },
+    {
+        value: '2021-06-15 15:30:00.000000Z',
+        label: '2021-06-15 15:30',
+    },
+    {
+        value: '2021-06-15 15:45:00.000000Z',
+        label: '2021-06-15 15:45',
+    },
 ];
 
 interface IRequestData {
@@ -46,8 +47,6 @@ interface IRequestData {
 }
 
 export default class ScheduleEvent extends React.Component<any, MyState> {
-    calendarList: CalendarFromResponse[];
-
     constructor(props: any) {
         super(props);
         this.state = {
@@ -63,8 +62,8 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
 
 
     handleChange(event: React.ChangeEvent<HTMLInputElement> | any) {
-        if(event.target.type != 'checkbox'){
-            this.setState({ [event.target.id]: event.target.value || ''} as Pick<MyState, any>);
+        if (event.target.type != 'checkbox') {
+            this.setState({[event.target.id]: event.target.value || ''} as Pick<MyState, any>);
         }
     }
 
@@ -81,13 +80,12 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
 
         axios.post(
             "http://localhost:8000/api/calendars/insert",
-                   body,{
-            }
+            body, {}
         ).then((response) => {
-          alert("Wszystko ok!")
+            alert("Wszystko ok!")
             console.log(response)
         }, (error) => {
-          alert("coś poszło nie tak, spróbuj jeszcze raz!")
+            alert("coś poszło nie tak, spróbuj jeszcze raz!")
         });
 
         event.preventDefault();
@@ -95,53 +93,70 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
 
 
     render() {
-        this.calendarList = JSON.parse(localStorage.getItem("calendar")) as CalendarFromResponse[];
-        // const theme = useTheme();
-        // const classes = useTheme();
 
-          const handleChange = (event: { target: { value: any; }; }) => {
+        const handleChange = (event: { target: { value: any; }; }) => {
             this.setState({"date": event.target.value});
-          };
+        };
         return (
-            // <ScheduleEventForm/>
+            <Container maxWidth="md">
+                <Box my={5}>
+                    <Card className="minWidth: 275" variant="outlined">
+                        <CardContent>
 
-            <Card className="minWidth: 275" variant="outlined">
-                <CardContent>
-                    <Typography variant="h5" component="h2">
-                        Utwórz nowe wydarzenie
-                    </Typography>
-                    <Typography className="marginBottom: 12" color="textSecondary">
-                        Uzupełnij poniższe informacje i utwórz wydarzenie klikając "Utwórz"
-                    </Typography>
-                    <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-                        <TextField id="title" label="Title"/>
-                        <TextField
-                            id="description"
-                            label="Description"
-                            multiline
-                        />
-                        <TextField
-                          id="dates"
-                          select
-                          label="Event start date"
-                          value={this.state.date}
-                          onChange={handleChange}
-                          helperText="Please select one of following dates"
-                        >
-                          {dates.map((option) => (
-                            <MenuItem key={option.value} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </TextField>
+                            <Box mt={5}>
+                                <Typography variant="h5" component="h2">
+                                    Schedule a new event
+                                </Typography>
+                            </Box>
+                            <Box mt={1}>
+                                <Typography className="marginBottom: 12" color="textSecondary">
+                                    Complete the information below and schedule your event by clicking the "Create"
+                                    button.
+                                </Typography>
+                            </Box>
+                            <Box my={5}>
+                                <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
+                                    <Box mt={3}>
+                                        <TextField fullWidth={true} id="title" label="Title"/>
+                                    </Box>
+                                    <Box mt={3}>
+                                        <TextField
+                                            id="description"
+                                            label="Description"
+                                            multiline
+                                            fullWidth={true}
+                                        />
+                                    </Box>
 
-                        <input type="submit" value="Send"/>
-                    </form>
-                </CardContent>
-                <CardActions>
-
-                </CardActions>
-            </Card>
+                                    <Box mt={4}>
+                                        <TextField
+                                            fullWidth={true}
+                                            id="dates"
+                                            select
+                                            label="Event start date"
+                                            value={this.state.date}
+                                            onChange={handleChange}
+                                            helperText="Please select one of following dates"
+                                        >
+                                            {dates.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+                                    </Box>
+                                    <Box mt={3}  textAlign={"center"}>
+                                        <Button type={"submit"} size="large" color="primary" variant="contained">Create</Button>
+                                    </Box>
+                                </form>
+                            </Box>
+                        </CardContent>
+                    </Card>
+                    <Box pt={4}>
+                        <Copyright/>
+                    </Box>
+                </Box>
+            </Container>
         );
     }
 }

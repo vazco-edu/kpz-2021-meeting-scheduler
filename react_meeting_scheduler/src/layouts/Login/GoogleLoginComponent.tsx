@@ -13,11 +13,9 @@ const GoogleForm: React.FC<GoogleButtonProps> = ({parentCallback}) => {
     const [isAuth, setAuth] = useState(false);
 
     const responseGoogle = (response: any) => {
-        console.log(response)
     }
 
     const sendToken = async (profileInfo: any) => {
-        console.log(profileInfo);
 
         try {
 

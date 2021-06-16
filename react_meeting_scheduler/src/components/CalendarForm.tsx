@@ -111,7 +111,7 @@ export default class CalendarForm extends React.Component<any , MyState> {
 
     render() {
         if(this.state.isSubmitted){
-            return <Redirect to='events'/>
+            return <Redirect to='schedule'/>
         }
 
         this.calendarList = JSON.parse(localStorage.getItem("calendar")) as CalendarFromResponse[];

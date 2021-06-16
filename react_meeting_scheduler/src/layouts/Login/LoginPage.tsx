@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { useLocation, Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import Grid from '@material-ui/core/Grid';
@@ -10,7 +10,6 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import GoogleForm from "./GoogleLoginComponent";
 import Copyright from "../../components/Copyright";
-import Dashboard from "../App/Dashboard";
 
 
 const useStyles = makeStyles((theme) => ({
@@ -46,13 +45,11 @@ const useStyles = makeStyles((theme) => ({
 
 const LoginPage = () => {
     const classes = useStyles();
-    const location = useLocation();
     const [isAuthorized, setAuthorized] = useState(false);
 
     let callback = (isAuth: boolean) => {
         setAuthorized(isAuth);
     }
-    console.log(isAuthorized)
 
     if(localStorage.getItem("access_token")){
         return <Redirect to={'/dashboard'}/>;

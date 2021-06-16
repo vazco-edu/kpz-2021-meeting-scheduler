@@ -32,7 +32,6 @@ class App extends Component {
                     token: localStorage.getItem("access_token"),
                 }
             );
-            console.log(res);
             return res.status;
         } catch (err) {
             console.log(err.message);

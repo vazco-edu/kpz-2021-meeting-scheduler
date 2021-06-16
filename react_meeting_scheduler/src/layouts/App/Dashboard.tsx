@@ -41,16 +41,6 @@ const Dashboard = () => {
         document.documentElement.scrollTop = 0;
     }, [location]);
 
-    const [isAuthorized, setAuthorized] = useState(false);
-
-    console.log(isAuthorized)
-    console.log(localStorage.getItem("calendar"))
-
-    // if(! isAuthorized){
-    //     return (
-    //         <Redirect to='/'/>
-    //     )
-    // }
 
     const getRoutes = (routes: any[]) => {
         return routes.map((prop, key) => {
@@ -83,9 +73,6 @@ const Dashboard = () => {
             <Box className={classes.content}>
                 <main className={classes.content}>
                     <div className={classes.appBarSpacer}/>
-                    <Box>
-                        {getBrandText(location.pathname)};
-                    </Box>
                     <Switch>
                         {getRoutes(routes)}
                         <Redirect from="*" to="/dashboard/"/>

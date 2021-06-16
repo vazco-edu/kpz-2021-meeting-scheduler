@@ -15,6 +15,7 @@ import Divider from "@material-ui/core/Divider";
 import List from "@material-ui/core/List";
 import {mainListItems} from "./ListItems";
 import {makeStyles} from "@material-ui/core/styles";
+import { useHistory } from "react-router-dom";
 
 const drawerWidth = 240;
 
@@ -84,12 +85,20 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Dashboard() {
     const classes = useStyles();
+    const history = useHistory();
     const [open, setOpen] = React.useState(true);
     const handleDrawerOpen = () => {
         setOpen(true);
     };
     const handleDrawerClose = () => {
         setOpen(false);
+    };
+
+    const logout = () => {
+        localStorage.clear()
+
+        let path = '/';
+        history.push(path);
     };
 
     return (
@@ -114,7 +123,7 @@ export default function Dashboard() {
                             <NotificationsIcon/>
                         </Badge>
                     </IconButton>
-                    <Button color="inherit">Logout</Button>
+                    <Button onClick={logout} color="inherit">Logout</Button>
                 </Toolbar>
             </AppBar>
             <Drawer

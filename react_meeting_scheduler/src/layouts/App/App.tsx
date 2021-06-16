@@ -1,6 +1,7 @@
 import React, {Component, useState} from 'react';
 import axios from 'axios';
 import Dashboard from "./Dashboard";
+import {Redirect} from "react-router-dom";
 
 const authAxios = axios.create({
     baseURL: 'http://127.0.0.1:8000',
@@ -11,6 +12,10 @@ const authAxios = axios.create({
 
 class App extends Component {
     render() {
+
+    if(! localStorage.getItem("access_token")){
+        return <Redirect to={'/'}/>;
+    }
 
         return (
             <div className="App">

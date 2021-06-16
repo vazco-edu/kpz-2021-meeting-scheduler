@@ -22,7 +22,7 @@ const dates = [
         label: '2021-06-15 15:00',
     },
     {
-        value: '2021-06-15 15:15:00.000000Z',
+        value: '2021-06-15 15:15:00',
         label: '2021-06-15 15:15',
     },
     {
@@ -68,16 +68,22 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
     }
 
     handleSubmit(event: React.ChangeEvent<HTMLInputElement> | any) {
+        let tmp = this.state.date.split(" ")
+        let tmp_str = tmp[0]+"T"+tmp[1]
+        console.log(tmp_str);
+        
         let body = {} as IRequestData;
-        body.calendars = localStorage.getItem('calendars');
+        body.calendars = JSON.parse(localStorage.getItem('calendars'));
         body.access_token = localStorage.getItem('google_access_token');
         body.refresh_token = localStorage.getItem('google_refresh_token');
-        body.date = this.state.date;
+        body.date = tmp_str//this.state.date;
         body.duration_hours = localStorage.getItem('duration_hours');
         body.duration_minutes = localStorage.getItem('duration_minutes');
         body.title = this.state.title;
         body.description = this.state.description;
 
+        console.log(body);
+        
         axios.post(
             "http://localhost:8000/api/calendars/insert",
             body, {}

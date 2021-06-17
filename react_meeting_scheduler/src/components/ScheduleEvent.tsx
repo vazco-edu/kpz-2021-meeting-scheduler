@@ -9,31 +9,12 @@ import Box from "@material-ui/core/Box";
 import Copyright from "./Copyright";
 import Button from "@material-ui/core/Button";
 
-
 interface MyState {
     date: string;
     title: string;
     description: string
 }
 
-const dates = [
-    {
-        value: '2021-06-15 15:00:00.000000Z',
-        label: '2021-06-15 15:00',
-    },
-    {
-        value: '2021-06-15 15:15:00',
-        label: '2021-06-15 15:15',
-    },
-    {
-        value: '2021-06-15 15:30:00.000000Z',
-        label: '2021-06-15 15:30',
-    },
-    {
-        value: '2021-06-15 15:45:00.000000Z',
-        label: '2021-06-15 15:45',
-    },
-];
 
 interface IRequestData {
     "calendars": string;
@@ -47,19 +28,48 @@ interface IRequestData {
 }
 
 export default class ScheduleEvent extends React.Component<any, MyState> {
+
+    dates = [
+        {
+            label: "Brak dostępnych dat",
+            value: "Brak dostępnych dat"
+        }
+    ];
+
     constructor(props: any) {
         super(props);
-        this.state = {
-            date: dates[0].value,
-            title: null,
-            description: null
-        }
 
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
 
-    }
+        if(localStorage.getItem('dates') != null){
+            let dates = JSON.parse(localStorage.getItem('dates'));
+            this.dates = Array();
+            for (let i=0; i<10; i++){
+                let label = dates[i].toString().split("T")
 
+                let parsed = {
+                    value: dates[i].toString(),
+                    label: label[0] + " " + label[1].slice(0, -3),
+                };
+
+                this.dates.push(parsed);
+            }
+
+            this.state = {
+                date: this.dates[0].value,
+                title: null,
+                description: null
+            }
+        }
+        else{
+            this.state = {
+                date: this.dates[0].value,
+                title: null,
+                description: null
+            }
+        }
+    }
 
     handleChange(event: React.ChangeEvent<HTMLInputElement> | any) {
         if (event.target.type != 'checkbox') {
@@ -70,7 +80,6 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
     handleSubmit(event: React.ChangeEvent<HTMLInputElement> | any) {
         let tmp = this.state.date.split(" ")
         let tmp_str = tmp[0]+"T"+tmp[1]
-        console.log(tmp_str);
         
         let body = {} as IRequestData;
         body.calendars = JSON.parse(localStorage.getItem('calendars'));
@@ -81,17 +90,15 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
         body.duration_minutes = localStorage.getItem('duration_minutes');
         body.title = this.state.title;
         body.description = this.state.description;
-
-        console.log(body);
         
         axios.post(
             "http://localhost:8000/api/calendars/insert",
             body, {}
         ).then((response) => {
-            alert("Wszystko ok!")
+            alert("Event created!")
             console.log(response)
         }, (error) => {
-            alert("coś poszło nie tak, spróbuj jeszcze raz!")
+            alert("Something went wrong, try again!")
         });
 
         event.preventDefault();
@@ -144,7 +151,7 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
                                             onChange={handleChange}
                                             helperText="Please select one of following dates"
                                         >
-                                            {dates.map((option) => (
+                                            {this.dates.map((option) => (
                                                 <MenuItem key={option.value} value={option.value}>
                                                     {option.label}
                                                 </MenuItem>

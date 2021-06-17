@@ -3,6 +3,15 @@ import CalendarCard from "./CalendarCard";
 import CalendarFromResponse from "./CalendarFromResponse";
 import axios from "axios";
 import {Redirect} from "react-router-dom";
+import Container from "@material-ui/core/Container";
+import Box from "@material-ui/core/Box";
+import Card from "@material-ui/core/Card";
+import CardContent from "@material-ui/core/CardContent";
+import Typography from "@material-ui/core/Typography";
+import Copyright from "./Copyright";
+import {TextField} from "@material-ui/core";
+import Button from "@material-ui/core/Button";
+import Grid from "@material-ui/core/Grid";
 
 interface MyState {
     calendarsChecked: string[];
@@ -92,7 +101,7 @@ export default class CalendarForm extends React.Component<any , MyState> {
         body.meeting_duration_minutes = meeting_duration_minutes
         body.access_token = localStorage.getItem("google_access_token")
         body.refresh_token = localStorage.getItem("google_refresh_token")
-        
+
         let a = await axios.post(
             "http://localhost:8000/api/calendars/algorithm", body
         )
@@ -102,7 +111,7 @@ export default class CalendarForm extends React.Component<any , MyState> {
         localStorage.setItem("dates", JSON.stringify(responseData.data.dates));
         localStorage.setItem("calendars", JSON.stringify(responseData.data.calendars));
         localStorage.setItem("duration_hours", JSON.stringify(responseData.data.duration_hours));
-        localStorage.setItem("duration_minutes", JSON.stringify(responseData.data.duration_minutes));      
+        localStorage.setItem("duration_minutes", JSON.stringify(responseData.data.duration_minutes));
     }
 
     render() {
@@ -112,22 +121,116 @@ export default class CalendarForm extends React.Component<any , MyState> {
 
         this.calendarList = JSON.parse(localStorage.getItem("calendar")) as CalendarFromResponse[];
         return (
-            <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
-                {this.calendarList != null ? this.calendarList.map(calendar => <CalendarCard id={calendar.id} summary={calendar.summary}
-                                                                                             description={calendar.description}/>) : console.log("Empty calendar list!")}
-                <label htmlFor="beginning_date"> Beginning date: </label>
-                <input type="date" id="beginning_date" value={this.state.beginning_date} required={true}/>
-                <label htmlFor="ending_date"> Ending date: </label>
-                <input type="date" id="ending_date" value={this.state.ending_date} required={true}/>
-                <label htmlFor="beginning_time"> Beginning hour and minute: </label>
-                <input type="time" id="beginning_time" value={this.state.beginning_time} required={true}/>
-                <label htmlFor="ending_time"> Ending hour and minute: </label>
-                <input type="time" id="ending_time" value={this.state.ending_time} required={true}/>
-                <label htmlFor="duration"> Meeting duration time: </label>
-                <input type="time" id="duration" value={this.state.duration} required={true}/>
-                <input type="submit" value="Send"/>
+        <Container maxWidth="md">
+            <Box my={5}>
+                <Card className="minWidth: 275" variant="outlined">
+                    <CardContent>
 
-            </form>
+                        <Box mt={5}>
+                            <Typography variant="h5" component="h2">
+                                Schedule a new event
+                            </Typography>
+                        </Box>
+                        <Box mt={1}>
+                            <Typography className="marginBottom: 12" color="textSecondary">
+                                Complete the information below and schedule your event by clicking the "Create"
+                                button.
+                            </Typography>
+                        </Box>
+                        <Box my={5} >
+                            <form onSubmit={this.handleSubmit} onChange={this.handleChange}>
+                                {this.calendarList != null ? this.calendarList.map(calendar => <CalendarCard id={calendar.id} summary={calendar.summary}
+                                                                                                             description={calendar.description}/>) : console.log("Empty calendar list!")}
+                                <Grid container spacing={5}>
+                                    <Grid item xs={12} md={6} lg={6}>
+                                        <Box mt={3}>
+                                            <TextField
+                                                fullWidth={true}
+                                                id="beginning_date"
+                                                label="Beginning date:"
+                                                type="date"
+                                                value={this.state.beginning_date}
+                                                required={true}
+                                                InputLabelProps={{
+                                                  shrink: true,
+                                                }}
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={6} lg={6}>
+                                        <Box mt={3}>
+                                            <TextField
+                                                fullWidth={true}
+                                                id="ending_date"
+                                                label="Ending date:"
+                                                type="date"
+                                                value={this.state.ending_date}
+                                                required={true}
+                                                InputLabelProps={{
+                                                  shrink: true,
+                                                }}
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                                <Grid container spacing={5}>
+                                    <Grid item xs={12} md={6} lg={6}>
+                                        <Box mt={3}>
+                                            <TextField
+                                                fullWidth={true}
+                                                id="beginning_time"
+                                                label="Beginning hour and minute:"
+                                                type="time"
+                                                value={this.state.beginning_time}
+                                                required={true}
+                                                InputLabelProps={{
+                                                  shrink: true,
+                                                }}
+                                            />
+                                        </Box>
+                                    </Grid>
+                                    <Grid item xs={12} md={6} lg={6}>
+                                        <Box mt={3}>
+                                            <TextField
+                                                fullWidth={true}
+                                                id="ending_time"
+                                                label="Ending hour and minute:"
+                                                type="time"
+                                                value={this.state.ending_time}
+                                                required={true}
+                                                InputLabelProps={{
+                                                  shrink: true,
+                                                }}
+                                            />
+                                        </Box>
+                                    </Grid>
+                                </Grid>
+                                <Box mt={3}>
+                                    <TextField
+                                        fullWidth={true}
+                                        id="duration"
+                                        label="Meeting duration time:"
+                                        type="time"
+                                        value={this.state.duration}
+                                        required={true}
+                                        InputLabelProps={{
+                                          shrink: true,
+                                        }}
+                                    />
+                                </Box>
+                                <Box mt={3}  textAlign={"center"}>
+                                    <Button type={"submit"} size="large" color="primary" variant="contained">Search</Button>
+                                </Box>
+
+                            </form>
+                        </Box>
+                    </CardContent>
+                </Card>
+                <Box pt={4}>
+                    <Copyright/>
+                </Box>
+            </Box>
+        </Container>
         );
     }
 }

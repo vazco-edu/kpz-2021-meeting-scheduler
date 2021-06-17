@@ -4,7 +4,8 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import {Checkbox} from "@material-ui/core";
+import {Checkbox, Switch} from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
 
 interface MyProps {
     id: string | undefined,
@@ -51,18 +52,22 @@ export default class CalendarCard extends React.Component<MyProps, MyState> {
 
 
         return (
-            <Card className="minWidth: 275" variant="outlined">
+            <Card className="minWidth: 275" variant="outlined" >
                 <CardContent>
-                    <Typography variant="h5" component="h2">
-                        {this.props.summary}
-                    </Typography>
-                    <Typography className="marginBottom: 12" color="textSecondary">
-                        {this.props.description}
-                    </Typography>
+                    <Grid container spacing={5}>
+                        <Grid item xs={10} md={10} lg={10}>
+                            <Typography variant="h5" component="h2">
+                                {this.props.summary}
+                            </Typography>
+                            <Typography  color="textSecondary">
+                                {this.props.description}
+                            </Typography>
+                        </Grid>
+                        <Grid item xs={2} md={2} lg={2}>
+                            <Checkbox id={this.props.id} onChange={this.handleChange}/>
+                        </Grid>
+                    </Grid>
                 </CardContent>
-                <CardActions>
-                    <Checkbox id={this.props.id} onChange={this.handleChange}/>
-                </CardActions>
             </Card>
         );
     }

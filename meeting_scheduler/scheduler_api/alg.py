@@ -8,7 +8,6 @@ from rest_framework.response import Response
 
 
 def get_free_blocks(
-    request,
     service,
     calendars: List[str],
     beginning_date: str,

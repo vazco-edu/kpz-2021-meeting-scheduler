@@ -57,6 +57,9 @@ INSTALLED_APPS = [
     #'rest_auth.registration', #?????????????????
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
+    #swagger
+    'rest_framework_swagger',
+    'drf_yasg',
 ]
 
 

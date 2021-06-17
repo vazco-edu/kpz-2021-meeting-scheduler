@@ -29,7 +29,17 @@ def get_google_token(access_token, refresh_token,
                     #token_uri=request.data["token_uri"],
                     token_uri=uri,
                     client_id=client_id,
-                    client_secret=client_secret)
+                    client_secret=client_secret,
+                    scopes=[
+                        "https://www.googleapis.com/auth/calendar.app.created",
+                        "https://www.googleapis.com/auth/calendar.events.freebusy",
+                        "https://www.googleapis.com/auth/calendar.freebusy",
+                        "https://www.googleapis.com/auth/calendar",
+                        "https://www.googleapis.com/auth/calendar.events",
+                        "https://www.googleapis.com/auth/calendar.events.owned",
+                        "https://www.googleapis.com/auth/calendar.calendarlist",
+                        "https://www.googleapis.com/auth/calendar.calendars",
+                        "https://www.googleapis.com/auth/calendar.acls"])
     return creds
 
 def get_google_credentials():
@@ -395,25 +405,25 @@ def insert_meetings(request):
     minutes = request.data["duration_minutes"]
 
     start = request.data["date"]
-    end = datetime.datetime.strptime(start,"%Y-%m-%dT%H:%M:%S")+datetime.timedelta(hours=hours,minutes=minutes)
-    end = datetime.datetime.strftime(end,"%Y-%m-%dT%H:%M:%S") + ".000000Z"
-    start = request.data["date"] + ".000000Z"
+    end = datetime.datetime.strptime(start,"%Y-%m-%dT%H:%M:%S")+datetime.timedelta(hours=int(hours),minutes=int(minutes))
+    end = datetime.datetime.strftime(end,"%Y-%m-%dT%H:%M:%S") + "+02:00"
+    start = request.data["date"] + "+02:00"
 
     event = {
-        'summary': 'Test',
-        'location': 'Wroclaw, Poland',
-        'description': 'desc',
+        'summary': request.data["title"],
+        #'location': 'Wroclaw, Poland',
+        'description': request.data["description"],
         'start': {
-            'dateTime': '2021-06-17T09:00:00+02:00',
+            'dateTime': start,
             'timeZone': 'Europe/Warsaw',
         },
         'end': {
-            'dateTime': '2021-06-17T17:00:00+02:00',
+            'dateTime': end,
             'timeZone': 'Europe/Warsaw',
         },
-        'recurrence': [
-            'RRULE:FREQ=DAILY;COUNT=2'
-        ],
+        # 'recurrence': [
+        #     'RRULE:FREQ=DAILY;COUNT=2'
+        # ],
         'attendees': [
             #{'email': 'hulewicz.k@gmail.com'},
         ],
@@ -427,7 +437,7 @@ def insert_meetings(request):
     }
 
     for calendar in request.data["calendars"]:
-        event = service.events().insert(calendarId=request.data["calendars"][0], body=event).execute()
+        event = service.events().insert(calendarId=calendar, body=event).execute()
     return Response(data=event, status=200)
 
 class GoogleLogin(SocialLoginView):

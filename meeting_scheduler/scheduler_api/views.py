@@ -66,8 +66,15 @@ def get_google_credentials():
 
     return creds
 
+@swagger_auto_schema(method='POST',
+manual_parameters=[openapi.Parameter("access_token", openapi.IN_QUERY, description="Enter google authorization access_token", type=openapi.TYPE_STRING),
+                    openapi.Parameter("refresh_token", openapi.IN_QUERY, description="Enter google authorization refresh_token", type=openapi.TYPE_STRING)
+                    ],
+responses={200: "Tokens has been sent",
+            401: "Unauthorised access",
+            403: "Forbidden access",
+            501: "An error occurred during receiving data"})
 @api_view(['POST'])
-#@api_view(['GET'])
 @parser_classes([JSONParser])
 def get_calendars_list(request, format=None):
     """
@@ -94,15 +101,14 @@ def get_calendars_list(request, format=None):
     return Response(calendar_list.get('items', []))
 
 @swagger_auto_schema(method='GET', 
-manual_parameters=[openapi.Parameter("time_min", openapi.IN_QUERY, description="Enter meetings beginning date", type=openapi.TYPE_STRING),
-                    openapi.Parameter("time_max", openapi.IN_QUERY, description="Enter meetings ending date", type=openapi.TYPE_STRING)
+manual_parameters=[openapi.Parameter("time_min", openapi.IN_QUERY, description="Enter beginning of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("time_max", openapi.IN_QUERY, description="Enter ending of meeting time interval", type=openapi.TYPE_STRING)
                     ],
-responses={200: "Received data from calednars",
+responses={200: "Calendar data has been received",
             401: "Unauthorised access",
             403: "Forbidden access",
-            501: "An error occured during receiving calendars"})
+            501: "An error occurred during receiving data"})
 @api_view(['GET'])
-#@api_view(['POST'])
 @parser_classes([JSONParser])
 def get_events_from_calendar(request, calendar, format=None):
     """
@@ -131,15 +137,21 @@ def get_events_from_calendar(request, calendar, format=None):
         return Response('No results', status=204)
 
     return Response(events)
+
+
 #test_param = openapi.Parameter("summary", openapi.IN_QUERY, description="Enter meeting summary")
 @swagger_auto_schema(method='GET', 
-manual_parameters=[openapi.Parameter("time_min", openapi.IN_QUERY, description="Enter meetings beginning date", type=openapi.TYPE_STRING),
-                    openapi.Parameter("time_max", openapi.IN_QUERY, description="Enter meetings ending date", type=openapi.TYPE_STRING)
+manual_parameters=[openapi.Parameter("summary", openapi.IN_QUERY, description="Enter meeting summary", type=openapi.TYPE_STRING),
+                    openapi.Parameter("location", openapi.IN_QUERY, description="Enter meeting location", type=openapi.TYPE_STRING),
+                    openapi.Parameter("description", openapi.IN_QUERY, description="Enter meeting description", type=openapi.TYPE_STRING),
+                    openapi.Parameter("start", openapi.IN_QUERY, description="Enter meeting start", type=openapi.TYPE_STRING),
+                    openapi.Parameter("end", openapi.IN_QUERY, description="Enter meeting end", type=openapi.TYPE_STRING),
+                    openapi.Parameter("attendees", openapi.IN_QUERY, description="Enter meeting attendees", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING))
                     ],
-responses={200: "Received data from calednars",
+responses={200: "Calendar data has been received",
             401: "Unauthorised access",
             403: "Forbidden access",
-            501: "An error occured during receiving calendars"})
+            501: "An error occurred during receiving data"})
 @api_view(['GET'])
 @parser_classes([JSONParser])
 def insert_event_to_calendar(request, calendar, format=None):
@@ -209,14 +221,14 @@ def insert_event_to_calendar(request, calendar, format=None):
     return Response({'Event created:': event.get('htmlLink')})
 
 @swagger_auto_schema(method='GET', 
-manual_parameters=[openapi.Parameter("time_min", openapi.IN_QUERY, description="Enter meetings beginning date", type=openapi.TYPE_STRING),
-                    openapi.Parameter("time_max", openapi.IN_QUERY, description="Enter meetings ending date", type=openapi.TYPE_STRING)
+manual_parameters=[openapi.Parameter("time_min", openapi.IN_QUERY, description="Enter beginning of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("time_max", openapi.IN_QUERY, description="Enter end of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("items", openapi.IN_QUERY, description="Enter items in calendar", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_OBJECT))
                     ],
-responses={200: "Received data from calednars",
+responses={200: "Calendar data has been received",
             401: "Unauthorised access",
             403: "Forbidden access",
-            501: "An error occured during receiving calendars"})
-            
+            501: "An error occurred during receiving data"})
 @api_view(['GET'])
 @parser_classes([JSONParser])
 def is_free_or_busy(request, format=None):
@@ -253,18 +265,19 @@ def is_free_or_busy(request, format=None):
 
     return Response(cal_dict)
 @swagger_auto_schema(method='POST', 
-manual_parameters=[openapi.Parameter("time_min", openapi.IN_QUERY, description="Enter meetings beginning date", type=openapi.TYPE_STRING),
-                    openapi.Parameter("time_max", openapi.IN_QUERY, description="Enter meetings ending date", type=openapi.TYPE_STRING)
+manual_parameters=[openapi.Parameter("code", openapi.IN_QUERY, description="Enter necessary data to receive data from Google Calendar API endpoint", type=openapi.TYPE_STRING)
                     ],
-responses={200: "Received data from calednars",
+responses={200: "Calendar data has been sent",
             401: "Unauthorised access",
             403: "Forbidden access",
-            501: "An error occured during receiving calendars"})
-@swagger_auto_schema(method='GET', 
-responses={200: "Received data from calednars",
+            501: "An error occurred during receiving data"})
+@swagger_auto_schema(method='GET',
+manual_parameters=[openapi.Parameter("code", openapi.IN_QUERY, description="Enter necessary data to receive data from Google Calendar API endpoint", type=openapi.TYPE_STRING)
+                    ],
+responses={200: "Calendar data has been received",
             401: "Unauthorised access",
             403: "Forbidden access",
-            501: "An error occured during receiving calendars"})
+            501: "An error occurred during receiving data"})
 @api_view(['GET', 'POST'])
 # @permission_classes([IsAuthenticated])
 @parser_classes([JSONParser])
@@ -305,6 +318,26 @@ def google_data(request, format=None):
 
         return Response(data=json_data, status=200)
 
+@swagger_auto_schema(method='POST',
+manual_parameters=[openapi.Parameter("access_token", openapi.IN_QUERY, description="Enter beginning of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("refresh_token", openapi.IN_QUERY, description="Enter ending of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("calendars", openapi.IN_QUERY, description="Enter meeting calendars", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING)),
+                    openapi.Parameter("beginning_date", openapi.IN_QUERY, description="Enter meeting beginning_date", type=openapi.TYPE_STRING),
+                    openapi.Parameter("ending_date", openapi.IN_QUERY, description="Enter meeting ending_date", type=openapi.TYPE_STRING),
+                    openapi.Parameter("beginning_hours", openapi.IN_QUERY, description="Enter meeting beginning_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("beginning_minutes", openapi.IN_QUERY, description="Enter meeting beginning_minutes", type=openapi.TYPE_STRING),
+                    openapi.Parameter("ending_hours", openapi.IN_QUERY, description="Enter meeting ending_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("ending_minutes", openapi.IN_QUERY, description="Enter meeting ending_minutes", type=openapi.TYPE_STRING),
+                    openapi.Parameter("meeting_duration_hours", openapi.IN_QUERY, description="Enter meeting meeting_duration_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("meeting_duration_minutes", openapi.IN_QUERY, description="Enter meeting meeting_duration_minutes", type=openapi.TYPE_STRING),
+                    openapi.Parameter("meeting_name", openapi.IN_QUERY, description="Enter meeting meeting_name", type=openapi.TYPE_STRING)
+                    ],
+responses={200: "Available slot found",
+            201: "Available slot before time interval",
+            202: "Available slot between time intervals",
+            401: "Unauthorised access",
+            403: "Forbidden access",
+            501: "An error occurred during receiving data"})
 # @permission_classes([IsAuthenticated])
 @api_view(["POST"])
 @parser_classes([JSONParser])      
@@ -317,8 +350,8 @@ def simple_algorithm(request):
         "calendars": list[string],
         "beginning_date": string,
         "ending_date": string,
-        "beggining_hours": string,
-        "beggining_minutes": string,
+        "beginning_hours": string,
+        "beginning_minutes": string,
         "ending_hours": string,
         "ending_minutes": string,
         "meeting_duration_hours": string,
@@ -403,7 +436,24 @@ def simple_algorithm(request):
 
     return Response(events_json)
 
-
+@swagger_auto_schema(method='POST',
+manual_parameters=[openapi.Parameter("access_token", openapi.IN_QUERY, description="Enter beginning of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("refresh_token", openapi.IN_QUERY, description="Enter ending of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("calendars", openapi.IN_QUERY, description="Enter meeting calendars", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING)),
+                    openapi.Parameter("beginning_date", openapi.IN_QUERY, description="Enter meeting beginning_date", type=openapi.TYPE_STRING),
+                    openapi.Parameter("ending_date", openapi.IN_QUERY, description="Enter meeting ending_date", type=openapi.TYPE_STRING),
+                    openapi.Parameter("beginning_hours", openapi.IN_QUERY, description="Enter meeting beginning_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("beginning_minutes", openapi.IN_QUERY, description="Enter meeting beginning_minutes", type=openapi.TYPE_STRING),
+                    openapi.Parameter("ending_hours", openapi.IN_QUERY, description="Enter meeting ending_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("ending_minutes", openapi.IN_QUERY, description="Enter meeting ending_minutes", type=openapi.TYPE_STRING),
+                    openapi.Parameter("meeting_duration_hours", openapi.IN_QUERY, description="Enter meeting meeting_duration_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("meeting_duration_minutes", openapi.IN_QUERY, description="Enter meeting meeting_duration_minutes", type=openapi.TYPE_STRING),
+                    openapi.Parameter("meeting_name", openapi.IN_QUERY, description="Enter meeting meeting_name", type=openapi.TYPE_STRING)
+                    ],
+responses={200: "Available slot found",
+            401: "Unauthorised access",
+            403: "Forbidden access",
+            501: "An error occurred during receiving data"})
 @api_view(["POST"])
 @parser_classes([JSONParser])      
 def simple_algorithm_v2(request):
@@ -415,8 +465,8 @@ def simple_algorithm_v2(request):
         "calendars": list[string],
         "beginning_date": string,
         "ending_date": string,
-        "beggining_hours": string,
-        "beggining_minutes": string,
+        "beginning_hours": string,
+        "beginning_minutes": string,
         "ending_hours": string,
         "ending_minutes": string,
         "meeting_duration_hours": string,
@@ -452,6 +502,20 @@ def simple_algorithm_v2(request):
     
     return Response(data,status=200)
 
+@swagger_auto_schema(method='POST',
+manual_parameters=[openapi.Parameter("access_token", openapi.IN_QUERY, description="Enter beginning of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("refresh_token", openapi.IN_QUERY, description="Enter ending of meeting time interval", type=openapi.TYPE_STRING),
+                    openapi.Parameter("calendars", openapi.IN_QUERY, description="Enter meeting calendars", type=openapi.TYPE_ARRAY, items=openapi.Items(type=openapi.TYPE_STRING)),
+                    openapi.Parameter("description", openapi.IN_QUERY, description="Enter meeting beginning_date", type=openapi.TYPE_STRING),
+                    openapi.Parameter("title", openapi.IN_QUERY, description="Enter meeting ending_date", type=openapi.TYPE_STRING),
+                    openapi.Parameter("start", openapi.IN_QUERY, description="Enter meeting beginning_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("duration_hours", openapi.IN_QUERY, description="Enter meeting meeting_duration_hours", type=openapi.TYPE_STRING),
+                    openapi.Parameter("duration_minutes", openapi.IN_QUERY, description="Enter meeting meeting_duration_minutes", type=openapi.TYPE_STRING)
+                    ],
+responses={200: "Meeting created",
+            401: "Unauthorised access",
+            403: "Forbidden access",
+            501: "An error occurred during receiving data"})
 @api_view(["POST"])
 @parser_classes([JSONParser])  
 def insert_meetings(request):

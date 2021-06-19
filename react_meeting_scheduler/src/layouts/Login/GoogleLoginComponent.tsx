@@ -2,8 +2,6 @@ import React, {useState} from "react";
 import {GoogleLogin} from "react-google-login";
 import axios from "axios";
 import CalendarFromResponse from "../../components/CalendarFromResponse";
-import ReactDOM from "react-dom";
-import CalendarForm from "../../components/CalendarForm";
 
 const googleApiPublicKey: string = process.env.REACT_APP_GOOGLE_KEY + ""
 
@@ -15,11 +13,9 @@ const GoogleForm: React.FC<GoogleButtonProps> = ({parentCallback}) => {
     const [isAuth, setAuth] = useState(false);
 
     const responseGoogle = (response: any) => {
-        console.log(response)
     }
 
     const sendToken = async (profileInfo: any) => {
-        console.log(profileInfo);
 
         try {
 

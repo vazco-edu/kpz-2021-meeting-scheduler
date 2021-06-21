@@ -399,11 +399,12 @@ def simple_algorithm_v2(request):
 @api_view(["POST"])
 @parser_classes([JSONParser])  
 def insert_meetings(request):
+
     service = build('calendar', 'v3', credentials=get_google_token(request.data["access_token"], request.data["refresh_token"]))
 
     hours = request.data["duration_hours"]
     minutes = request.data["duration_minutes"]
-
+    print(request.data["date"])
     start = request.data["date"]
     end = datetime.datetime.strptime(start,"%Y-%m-%dT%H:%M:%S")+datetime.timedelta(hours=int(hours),minutes=int(minutes))
     end = datetime.datetime.strftime(end,"%Y-%m-%dT%H:%M:%S") + "+02:00"
@@ -425,6 +426,7 @@ def insert_meetings(request):
         #     'RRULE:FREQ=DAILY;COUNT=2'
         # ],
         'attendees': [
+            {"email": cal} for cal in request.data["calednars"]
             #{'email': 'hulewicz.k@gmail.com'},
         ],
         'reminders': {
@@ -436,8 +438,8 @@ def insert_meetings(request):
         },
     }
 
-    for calendar in request.data["calendars"]:
-        event = service.events().insert(calendarId=calendar, body=event).execute()
+    # for calendar in request.data["calendars"]:
+        # event = service.events().insert(calendarId=calendar, body=event).execute()
     return Response(data=event, status=200)
 
 class GoogleLogin(SocialLoginView):

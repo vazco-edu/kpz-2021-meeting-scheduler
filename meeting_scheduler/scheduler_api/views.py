@@ -404,12 +404,13 @@ def insert_meetings(request):
 
     hours = request.data["duration_hours"]
     minutes = request.data["duration_minutes"]
-    print(request.data["date"])
-    start = request.data["date"]
+    start = request.data["date"][:19]
     end = datetime.datetime.strptime(start,"%Y-%m-%dT%H:%M:%S")+datetime.timedelta(hours=int(hours),minutes=int(minutes))
     end = datetime.datetime.strftime(end,"%Y-%m-%dT%H:%M:%S") + "+02:00"
-    start = request.data["date"] + "+02:00"
-
+    start = request.data["date"][:19] + "+02:00"
+    print(request.data)
+    print(start)
+    print(end)
     event = {
         'summary': request.data["title"],
         #'location': 'Wroclaw, Poland',
@@ -426,8 +427,7 @@ def insert_meetings(request):
         #     'RRULE:FREQ=DAILY;COUNT=2'
         # ],
         'attendees': [
-            {"email": cal} for cal in request.data["calednars"]
-            #{'email': 'hulewicz.k@gmail.com'},
+            {"email": cal} for cal in request.data["calendars"]
         ],
         'reminders': {
             'useDefault': False,
@@ -439,7 +439,8 @@ def insert_meetings(request):
     }
 
     # for calendar in request.data["calendars"]:
-        # event = service.events().insert(calendarId=calendar, body=event).execute()
+    print(event)
+    event = service.events().insert(calendarId=request.data["calendars"][0], body=event).execute()
     return Response(data=event, status=200)
 
 class GoogleLogin(SocialLoginView):

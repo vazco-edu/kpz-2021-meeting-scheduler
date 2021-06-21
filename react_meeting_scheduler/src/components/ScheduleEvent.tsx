@@ -44,8 +44,14 @@ export default class ScheduleEvent extends React.Component<any, MyState> {
 
         if(localStorage.getItem('dates') != null){
             let dates = JSON.parse(localStorage.getItem('dates'));
+            console.log(dates);
+            
             this.dates = Array();
-            for (let i=0; i<10; i++){
+            console.log(this.dates);
+            
+            for (let i=0; i<dates.length; i++){
+                console.log(dates[i]);
+                
                 let label = dates[i].toString().split("T")
 
                 let parsed = {
